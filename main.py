@@ -1,5 +1,10 @@
 from fsrs import Scheduler, Card, Rating, ReviewLog
 import json
+from supabase import create_client, Client
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 scheduler = Scheduler()
 
@@ -31,13 +36,21 @@ print(f"Card due in {time_delta.seconds} seconds")
 # > Card due on 2024-11-30 18:42:36.070712+00:00
 # > Card due in 599 seconds
 
-full_card = {
-    "card": card,
-    "question": "What is the capital of France?",
-    "answer": "Paris",
-    "tags": ["матан", "линал"],
-    "user": 1
-}
+class FullCard:
+    card: Card
+    question: str
+    answer: str
+    tags: list[str]
+    user: int
+    
+    def __init__(self, card: Card, question: str, answer: str, tags: list[str], user: int):
+        self.card = card
+        self.question = question
+        self.answer = answer
+        self.tags = tags
+        self.user = user
+
+full_card = FullCard(card, "What is the capital of France?", "Paris", ["матан", "линал"], 1)
 
 # User = {
 #     "id": 1,
@@ -50,6 +63,14 @@ full_card = {
 # }
 
 class User:
+    id: int
+    name: str
+    email: str
+    full_cards: list[FullCard]
+    review_logs: list[dict]
+    scheduler: Scheduler
+    tags: list[str]
+    
     def __init__(self, id, name, email, full_cards, review_logs, scheduler, tags):
         self.id = id
         self.name = name
@@ -63,6 +84,18 @@ user = User(1, "John Doe", "john.doe@example.com", [full_card], [review_log], sc
 print(user.id)
 print(user.name)
 print(user.email)
-print(user.full_cards[0]["question"])
+print(user.full_cards[0].question)
 print(user.scheduler.to_dict())
 print(user.tags)
+
+url = os.environ.get("SUPABASE_URL") or ''
+key = os.environ.get("SUPABASE_KEY") or ''
+if not url or not key:
+    raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set")
+
+supabase: Client = create_client(url, key)
+# response = (
+#     supabase.table("users")
+#     .select("*")
+#     .execute()
+# )
