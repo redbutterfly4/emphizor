@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel
 from design import Ui_MainWindow
 class MainWindow(QMainWindow):
     tags : list[str]
@@ -9,11 +9,20 @@ class MainWindow(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_tag_clicked)
 
     def add_tag_clicked(self):
-        dialog = QDialog(self)
-        dialog.setFixedHeight(400)
-        dialog.setFixedWidth(400)
-        dialog.setWindowTitle('Add tag')
-        dialog.show()
+        temp_dialog = QDialog(self)
+        temp_dialog.setFixedHeight(400)
+        temp_dialog.setFixedWidth(400)
+        temp_dialog.setWindowTitle('Add tag')
+        temp_layout = QVBoxLayout(temp_dialog)
+        temp_label = QLabel(temp_dialog)
+        temp_label.setFixedWidth(150)
+        temp_label.setText('Enter tag name:')
+
+        
+        
+        temp_dialog.show()
+
+        
         
 
 def main():
