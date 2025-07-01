@@ -19,7 +19,7 @@ card = Card()
 # Rating.Good (==3) remembered the card after a hesitation
 # Rating.Easy (==4) remembered the card easily
 
-rating = Rating.Good
+rating = Rating.Again
 
 card, review_log = scheduler.review_card(card, rating)
 
@@ -37,7 +37,7 @@ print(f"Card due in {time_delta.seconds} seconds")
 # > Card due on 2024-11-30 18:42:36.070712+00:00
 # > Card due in 599 seconds
 
-full_card = FullCard(card, "What is the capital of France?", "Paris", ["матан", "линал"], 1)
+full_card = FullCard(card, "What is python?", "Python is a programming language", ["programming"])
 
 user = User(1, "John Doe", "john.doe@example.com", [full_card], [review_log], scheduler)
 print(user.id)
