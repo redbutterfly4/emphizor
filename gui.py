@@ -4,6 +4,7 @@ class MainWindow(QMainWindow):
     tags : list[str]
     def __init__(self):
         super().__init__()
+        self.tags = []  # Initialize the tags attribute as an empty list
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.pushButton.clicked.connect(self.add_tag_clicked)
