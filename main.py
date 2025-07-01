@@ -67,7 +67,7 @@ class User:
     name: str
     email: str
     full_cards: list[FullCard]
-    review_logs: list[dict]
+    review_logs: list[ReviewLog]
     scheduler: Scheduler
     tags: list[str]
     
