@@ -35,8 +35,8 @@ class User:
     scheduler: Scheduler
     
     def __init__(self, name, email, full_cards, review_logs, scheduler):
-        User.id += 1
-        self.id = User.id
+        User.id_generator += 1
+        self.id = User.id_generator
         self.name = name
         self.email = email
         self.full_cards = full_cards
