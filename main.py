@@ -3,11 +3,14 @@ import json
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timezone
+
+# Import our custom classes
+from models import FullCard, User
 
 load_dotenv()
 
 scheduler = Scheduler()
-
 
 card = Card()
 
@@ -23,8 +26,6 @@ card, review_log = scheduler.review_card(card, rating)
 print(f"Card rated {review_log.rating} at {review_log.review_datetime}")
 # > Card rated 3 at 2024-11-30 17:46:58.856497+00:00
 
-from datetime import datetime, timezone
-
 due = card.due
 
 # how much time between when the card is due and now
@@ -36,82 +37,14 @@ print(f"Card due in {time_delta.seconds} seconds")
 # > Card due on 2024-11-30 18:42:36.070712+00:00
 # > Card due in 599 seconds
 
-class FullCard:
-    card: Card
-    question: str
-    answer: str
-    tags: list[str]
-    user: int
-    
-    def __init__(self, card: Card, question: str, answer: str, tags: list[str], user: int):
-        self.card = card
-        self.question = question
-        self.answer = answer
-        self.tags = tags
-        self.user = user
-    
-    def to_dict(self):
-        return {
-            "card": self.card.to_dict(),
-            "question": self.question,
-            "answer": self.answer,
-            "tags": self.tags,
-            "user": self.user
-        }
-
-    
-    
-
 full_card = FullCard(card, "What is the capital of France?", "Paris", ["матан", "линал"], 1)
 
-class User:
-    id: int
-    name: str
-    email: str
-    full_cards: list[FullCard]
-    review_logs: list[ReviewLog]
-    scheduler: Scheduler
-    tags: list[str]
-    
-    def __init__(self, id, name, email, full_cards, review_logs, scheduler, tags):
-        self.id = id
-        self.name = name
-        self.email = email
-        self.full_cards = full_cards
-        self.review_logs = review_logs
-        self.scheduler = scheduler
-        self.tags = tags
-
-    # def to_json(self):
-    #     tmp_dict = {
-    #         "id": self.id,
-    #         "name": self.name,
-    #         "email": self.email,
-    #         "full_cards": [card.to_dict() for card in self.full_cards],
-    #         "review_logs": [log.to_dict() for log in self.review_logs],
-    #         "scheduler": self.scheduler.to_dict(),
-    #         "tags": self.tags
-    #     }
-    #     return json.dumps(tmp_dict)
-
-    def save_to_supabase(self):
-        response = supabase.table("users").insert({
-            "name": self.name,
-            "email": self.email,
-            "full_cards": [card.to_dict() for card in self.full_cards],
-            "review_logs": [log.to_dict() for log in self.review_logs],
-            "scheduler": self.scheduler.to_dict(),
-            "tags": self.tags
-        }).execute()
-        print(response)
-
-user = User(1, "John Doe", "john.doe@example.com", [full_card], [review_log], scheduler, ["матан", "линал"])
+user = User(1, "John Doe", "john.doe@example.com", [full_card], [review_log], scheduler)
 print(user.id)
 print(user.name)
 print(user.email)
 print(user.full_cards[0].question)
 print(user.scheduler.to_dict())
-print(user.tags)
 
 url = os.environ.get("SUPABASE_URL") or ''
 key = os.environ.get("SUPABASE_KEY") or ''
@@ -136,7 +69,7 @@ supabase: Client = create_client(url, key)
 #     .execute()
 # )
 
-# user.save_to_supabase()
+# user.save_to_supabase(supabase)
 response = (
     supabase.table("users")
     .select("*")
