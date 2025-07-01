@@ -9,14 +9,12 @@ class FullCard:
     question: str
     answer: str
     tags: list[str]
-    user: int
     
-    def __init__(self, card: Card, question: str, answer: str, tags: list[str], user: int):
+    def __init__(self, card: Card, question: str, answer: str, tags: list[str]):
         self.card = card
         self.question = question
         self.answer = answer
         self.tags = tags
-        self.user = user
     
     def to_dict(self):
         return {
@@ -24,7 +22,6 @@ class FullCard:
             "question": self.question,
             "answer": self.answer,
             "tags": self.tags,
-            "user": self.user
         }
 
 
