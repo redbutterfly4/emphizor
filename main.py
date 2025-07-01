@@ -8,7 +8,7 @@ load_dotenv()
 
 scheduler = Scheduler()
 
-# note: all new cards are 'due' immediately upon creation
+
 card = Card()
 
 # Rating.Again (==1) forgot the card
@@ -49,18 +49,20 @@ class FullCard:
         self.answer = answer
         self.tags = tags
         self.user = user
+    
+    def to_dict(self):
+        return {
+            "card": self.card.to_dict(),
+            "question": self.question,
+            "answer": self.answer,
+            "tags": self.tags,
+            "user": self.user
+        }
+
+    
+    
 
 full_card = FullCard(card, "What is the capital of France?", "Paris", ["матан", "линал"], 1)
-
-# User = {
-#     "id": 1,
-#     "name": "John Doe",
-#     "email": "john.doe@example.com",
-#     "full_cards": [full_card],
-#     "review_logs": [review_log],
-#     "scheduler": scheduler,
-#     "tags": ["матан", "линал"],
-# }
 
 class User:
     id: int
@@ -80,6 +82,29 @@ class User:
         self.scheduler = scheduler
         self.tags = tags
 
+    # def to_json(self):
+    #     tmp_dict = {
+    #         "id": self.id,
+    #         "name": self.name,
+    #         "email": self.email,
+    #         "full_cards": [card.to_dict() for card in self.full_cards],
+    #         "review_logs": [log.to_dict() for log in self.review_logs],
+    #         "scheduler": self.scheduler.to_dict(),
+    #         "tags": self.tags
+    #     }
+    #     return json.dumps(tmp_dict)
+
+    def save_to_supabase(self):
+        response = supabase.table("users").insert({
+            "name": self.name,
+            "email": self.email,
+            "full_cards": [card.to_dict() for card in self.full_cards],
+            "review_logs": [log.to_dict() for log in self.review_logs],
+            "scheduler": self.scheduler.to_dict(),
+            "tags": self.tags
+        }).execute()
+        print(response)
+
 user = User(1, "John Doe", "john.doe@example.com", [full_card], [review_log], scheduler, ["матан", "линал"])
 print(user.id)
 print(user.name)
@@ -94,8 +119,26 @@ if not url or not key:
     raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set")
 
 supabase: Client = create_client(url, key)
+
+
+
+
 # response = (
 #     supabase.table("users")
-#     .select("*")
+#     .insert({
+#         "name": user.name, 
+#         "email": user.email, 
+#         "full_cards": [card.to_dict() for card in user.full_cards], 
+#         "review_logs": [log.to_dict() for log in user.review_logs], 
+#         "scheduler": user.scheduler.to_dict(), 
+#         "tags": user.tags
+#     })
 #     .execute()
 # )
+
+# user.save_to_supabase()
+response = (
+    supabase.table("users")
+    .select("*")
+    .execute()
+)
