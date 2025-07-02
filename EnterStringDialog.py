@@ -26,7 +26,7 @@ class EnterStringDialog(QDialog):
         self.layout.addWidget(self.button_box)
 
         self.show()
-        self.button_box.accepted.connect(self.accept_button_pressed())
+        self.button_box.accepted.connect(self.accept_button_pressed)
 
            
         
