@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, QPushButton
 from design import Ui_MainWindow
 class MainWindow(QMainWindow):
-    tags : list[str]
+    tags : set[str]
+    tag_buttons : list[QPushButton]
     tag_len_limit = 50
     def __init__(self):
         super().__init__()
@@ -36,9 +37,14 @@ class MainWindow(QMainWindow):
         temp_button_box.accepted.connect(accept_button_pressed)
         return temp_line_edit.text()
 
-
+    def add_tag_button(self, tag_name):
+        pass
+            
     def add_tag_clicked(self):
-       self.enter_string_dialog('Enter tag: ', 'Add tag')
+       new_tag_name = self.enter_string_dialog('Enter tag: ', 'Add tag')
+       
+           
+           
 
         
         
