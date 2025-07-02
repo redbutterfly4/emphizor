@@ -26,6 +26,7 @@ class FullCard:
 
 
 class User:
+    id_generator = 0 # static variable for id
     id: int
     name: str
     email: str
@@ -33,8 +34,9 @@ class User:
     review_logs: list[ReviewLog]
     scheduler: Scheduler
     
-    def __init__(self, id, name, email, full_cards, review_logs, scheduler):
-        self.id = id
+    def __init__(self, name, email, full_cards, review_logs, scheduler):
+        User.id_generator += 1
+        self.id = User.id_generator
         self.name = name
         self.email = email
         self.full_cards = full_cards
