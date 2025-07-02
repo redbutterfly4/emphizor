@@ -6,6 +6,7 @@ class MainWindow(QMainWindow):
     tag_len_limit = 50
     def __init__(self):
         super().__init__()
+        self.tags = []  # Initialize the tags attribute as an empty list
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.pushButton.clicked.connect(self.add_tag_clicked)
