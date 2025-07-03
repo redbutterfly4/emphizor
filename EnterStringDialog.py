@@ -5,9 +5,11 @@ class EnterStringDialog(QDialog):
     button_box : QDialogButtonBox
     line_edit : QLineEdit
     def accept_button_pressed(self):
+        self.accept()
         self.close() 
     def __init__(self, label_message,  title, parent):
         super().__init__(parent)
+        self.setParent(parent)
         self.setFixedHeight(400)
         self.setFixedWidth(400)
         self.setWindowTitle(title)
@@ -28,6 +30,8 @@ class EnterStringDialog(QDialog):
         self.show()
         self.button_box.accepted.connect(self.accept_button_pressed)
 
-           
+        button = QPushButton(parent)
+        
+        
         
         
