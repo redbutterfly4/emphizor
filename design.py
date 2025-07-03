@@ -15,20 +15,21 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QMainWindow,
-    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+    QMainWindow, QMenuBar, QPushButton, QSizePolicy,
+    QStatusBar, QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(800, 600)
+        MainWindow.setDocumentMode(False)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayoutWidget = QWidget(self.centralwidget)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(10, 0, 111, 128))
+        self.verticalLayoutWidget.setGeometry(QRect(10, 0, 111, 551))
         self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -41,8 +42,56 @@ class Ui_MainWindow(object):
         self.label = QLabel(self.verticalLayoutWidget)
         self.label.setObjectName(u"label")
         self.label.setFrameShape(QFrame.Shape.NoFrame)
+        self.label.setFrameShadow(QFrame.Shadow.Plain)
 
         self.verticalLayout.addWidget(self.label)
+
+        self.verticalLayoutWidget_2 = QWidget(self.centralwidget)
+        self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
+        self.verticalLayoutWidget_2.setGeometry(QRect(129, 3, 511, 551))
+        self.AddCartIntaerfaceLayout = QVBoxLayout(self.verticalLayoutWidget_2)
+        self.AddCartIntaerfaceLayout.setObjectName(u"AddCartIntaerfaceLayout")
+        self.AddCartIntaerfaceLayout.setContentsMargins(0, 0, 0, 0)
+        self.CardDescripitionLayout = QHBoxLayout()
+        self.CardDescripitionLayout.setObjectName(u"CardDescripitionLayout")
+        self.CardDescriptionLabel = QLabel(self.verticalLayoutWidget_2)
+        self.CardDescriptionLabel.setObjectName(u"CardDescriptionLabel")
+        self.CardDescriptionLabel.setMinimumSize(QSize(175, 0))
+        self.CardDescriptionLabel.setMaximumSize(QSize(175, 70))
+
+        self.CardDescripitionLayout.addWidget(self.CardDescriptionLabel)
+
+        self.CardDescriptionTextEdit = QTextEdit(self.verticalLayoutWidget_2)
+        self.CardDescriptionTextEdit.setObjectName(u"CardDescriptionTextEdit")
+
+        self.CardDescripitionLayout.addWidget(self.CardDescriptionTextEdit)
+
+
+        self.AddCartIntaerfaceLayout.addLayout(self.CardDescripitionLayout)
+
+        self.CardAnswerLayout = QHBoxLayout()
+        self.CardAnswerLayout.setObjectName(u"CardAnswerLayout")
+        self.CardAnswerLabel = QLabel(self.verticalLayoutWidget_2)
+        self.CardAnswerLabel.setObjectName(u"CardAnswerLabel")
+        self.CardAnswerLabel.setMinimumSize(QSize(175, 0))
+        self.CardAnswerLabel.setMaximumSize(QSize(175, 16777215))
+
+        self.CardAnswerLayout.addWidget(self.CardAnswerLabel)
+
+        self.textEdit = QTextEdit(self.verticalLayoutWidget_2)
+        self.textEdit.setObjectName(u"textEdit")
+
+        self.CardAnswerLayout.addWidget(self.textEdit)
+
+
+        self.AddCartIntaerfaceLayout.addLayout(self.CardAnswerLayout)
+
+        self.addCartButton = QPushButton(self.verticalLayoutWidget_2)
+        self.addCartButton.setObjectName(u"addCartButton")
+        self.addCartButton.setMaximumSize(QSize(16777215, 16777215))
+        self.addCartButton.setFlat(False)
+
+        self.AddCartIntaerfaceLayout.addWidget(self.addCartButton)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -62,8 +111,11 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Emphizer", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Emphizor", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Add tag ", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Your tags:", None))
+        self.CardDescriptionLabel.setText(QCoreApplication.translate("MainWindow", u"Enter card description:", None))
+        self.CardAnswerLabel.setText(QCoreApplication.translate("MainWindow", u"Enter card answer:", None))
+        self.addCartButton.setText(QCoreApplication.translate("MainWindow", u"Add cart", None))
     # retranslateUi
 
