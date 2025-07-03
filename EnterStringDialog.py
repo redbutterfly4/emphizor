@@ -4,10 +4,16 @@ class EnterStringDialog(QDialog):
     label : QLabel
     button_box : QDialogButtonBox
     line_edit : QLineEdit
+    def is_empty_string_entered(self):
+        if self.line_edit.text() == '':
+            return True
+        return False
     def accept_button_pressed(self):
+        if self.is_empty_string_entered() is True:
+            return 
         self.accept()
         self.close() 
-    def __init__(self, label_message,  title, parent):
+    def __init__(self, label_message,  title, parent, len_limit):
         super().__init__(parent)
         self.setParent(parent)
         self.setFixedHeight(400)
@@ -19,6 +25,7 @@ class EnterStringDialog(QDialog):
         self.label.setText(label_message)
         self.line_edit = QLineEdit(self)
         self.line_edit.setFixedWidth(250)
+        self.line_edit.setMaxLength(len_limit)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.line_edit)
 
@@ -29,8 +36,8 @@ class EnterStringDialog(QDialog):
 
         self.show()
         self.button_box.accepted.connect(self.accept_button_pressed)
-
-        button = QPushButton(parent)
+       
+    
         
         
         

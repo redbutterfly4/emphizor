@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_tag_clicked)
        
     def create_enter_string_dialog(self, label_message, title):
-        self.enter_string_dialog = EnterStringDialog(label_message,title,self)
+        self.enter_string_dialog = EnterStringDialog(label_message,title,self,self.tag_len_limit)
         self.enter_string_dialog.accepted.connect(self.add_tag_button)
         
     def add_tag_button(self):
