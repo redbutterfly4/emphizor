@@ -20,10 +20,12 @@ class MainWindow(QMainWindow):
         self.enter_string_dialog.accepted.connect(self.add_tag_button)
         
     def add_tag_button(self):
-        button = QPushButton(self)
-        button.setText(self.enter_string_dialog.line_edit.text())
-        self.ui.verticalLayout.addWidget(button)
-        self.tag_buttons.append(button)
+        if not self.enter_string_dialog.line_edit.text() in self.tags:
+            self.tags.append(self.enter_string_dialog.line_edit.text())
+            button = QPushButton(self)
+            button.setText(self.enter_string_dialog.line_edit.text())
+            self.ui.verticalLayout.addWidget(button)
+            self.tag_buttons.append(button)
     def add_tag_clicked(self):
        self.create_enter_string_dialog('Enter tag: ', 'Add tag')
 def main():
