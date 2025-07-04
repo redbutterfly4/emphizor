@@ -63,20 +63,20 @@ class Ui_MainWindow(object):
         self.AddCartIntaerfaceLayout = QVBoxLayout(self.contentWidget)
         self.AddCartIntaerfaceLayout.setObjectName(u"AddCartIntaerfaceLayout")
         
-        self.CardDescripitionLayout = QHBoxLayout()
-        self.CardDescripitionLayout.setObjectName(u"CardDescripitionLayout")
+        self.CardDescriptionLayout = QHBoxLayout()
+        self.CardDescriptionLayout.setObjectName(u"CardDescriptionLayout")
         
         self.CardDescriptionLabel = QLabel(self.contentWidget)
         self.CardDescriptionLabel.setObjectName(u"CardDescriptionLabel")
         self.CardDescriptionLabel.setMinimumSize(QSize(150, 0))
         self.CardDescriptionLabel.setMaximumSize(QSize(150, 70))
-        self.CardDescripitionLayout.addWidget(self.CardDescriptionLabel)
+        self.CardDescriptionLayout.addWidget(self.CardDescriptionLabel)
 
         self.CardDescriptionTextEdit = QTextEdit(self.contentWidget)
         self.CardDescriptionTextEdit.setObjectName(u"CardDescriptionTextEdit")
-        self.CardDescripitionLayout.addWidget(self.CardDescriptionTextEdit)
+        self.CardDescriptionLayout.addWidget(self.CardDescriptionTextEdit)
 
-        self.AddCartIntaerfaceLayout.addLayout(self.CardDescripitionLayout)
+        self.AddCartIntaerfaceLayout.addLayout(self.CardDescriptionLayout)
 
         self.CardAnswerLayout = QHBoxLayout()
         self.CardAnswerLayout.setObjectName(u"CardAnswerLayout")
