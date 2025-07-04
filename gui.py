@@ -439,9 +439,9 @@ class MainWindow(QMainWindow):
         if self.user and self.app:
             try:
                 self.app.save_user()
-                print("Auto-saved user data before closing")
+                self.statusBar().showMessage("Auto-saved user data before closing", 3000)
             except Exception as e:
-                print(f"Failed to auto-save: {str(e)}")
+                self.statusBar().showMessage("Failed to auto-save! ❌", 3000)
                 # Ask user if they want to close without saving
                 reply = QMessageBox.question(self, "Save Error", 
                     f"Failed to save data: {str(e)}\n\nDo you want to close without saving?",
