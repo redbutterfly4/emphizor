@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-                              QPushButton, QWidget, QFrame, QTextEdit, QMessageBox)
-from PySide6.QtCore import Qt
+                              QPushButton, QWidget, QFrame, QTextEdit, QMessageBox, QSpacerItem, QSizePolicy)
+from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QRect
+from PySide6.QtGui import QFont, QPalette, QColor
 from datetime import datetime, timezone
 from fsrs import Rating
 from base_classes import FullCard
@@ -18,192 +19,279 @@ class PracticeDialog(QDialog):
         self.load_due_cards()
         
     def setup_ui(self):
-        self.setWindowTitle("Practice - Spaced Repetition")
-        self.setFixedSize(700, 500)
+        self.setWindowTitle("Practice Session - Emphizor")
+        self.resize(900, 700)
+        self.setMinimumSize(500, 400)  # Better minimum for small screens
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
-        # Main layout
-        main_layout = QVBoxLayout(self)
-        
-        # Header with progress
-        self.header_label = QLabel()
-        self.header_label.setStyleSheet("font-size: 16px; font-weight: bold; margin: 10px;")
-        main_layout.addWidget(self.header_label)
-        
-        # Card container
-        self.card_frame = QFrame()
-        self.card_frame.setFrameStyle(QFrame.Shape.Box)
-        self.card_frame.setStyleSheet("""
-            QFrame {
-                background-color: #f8f9fa;
-                border: 2px solid #dee2e6;
-                border-radius: 12px;
-                margin: 10px;
-                padding: 20px;
+        # Apply modern purple gradient styling like original practice UI
+        self.setStyleSheet("""
+            QDialog {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 #667eea, stop: 1 #764ba2);
+                color: white;
             }
         """)
-        card_layout = QVBoxLayout(self.card_frame)
         
-        # Question
-        self.question_label = QLabel("Question:")
-        self.question_label.setStyleSheet("font-weight: bold; color: #007bff; font-size: 14px;")
-        card_layout.addWidget(self.question_label)
+        # Main layout with responsive spacing
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(15)  # Smaller spacing for mobile
+        main_layout.setContentsMargins(20, 20, 20, 20)  # Responsive margins
+        
+        # Header section
+        header_layout = QVBoxLayout()
+        
+        # Progress and title
+        self.progress_label = QLabel()
+        self.progress_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.progress_label.setStyleSheet("""
+            QLabel {
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 16px;
+                font-weight: 500;
+                padding: 10px;
+            }
+        """)
+        header_layout.addWidget(self.progress_label)
+        
+        self.session_title = QLabel("Practice Session")
+        self.session_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.session_title.setStyleSheet("""
+            QLabel {
+                color: white;
+                font-size: 28px;
+                font-weight: bold;
+                padding: 0px 0px 20px 0px;
+            }
+        """)
+        header_layout.addWidget(self.session_title)
+        
+        main_layout.addLayout(header_layout)
+        
+        # Card container - this is the main focal point
+        self.card_container = QFrame()
+        self.card_container.setStyleSheet("""
+            QFrame {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
+                border: none;
+                box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+            }
+        """)
+        self.card_container.setMinimumHeight(250)  # Smaller for mobile
+        
+        card_layout = QVBoxLayout(self.card_container)
+        card_layout.setSpacing(15)
+        card_layout.setContentsMargins(30, 30, 30, 30)  # Responsive margins
+        
+        # Question section
+        self.question_container = QWidget()
+        question_layout = QVBoxLayout(self.question_container)
+        question_layout.setSpacing(12)
+        
+        self.question_label = QLabel("Question")
+        self.question_label.setStyleSheet("""
+            QLabel {
+                color: #667eea;
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+        """)
+        question_layout.addWidget(self.question_label)
         
         self.question_text = QLabel()
         self.question_text.setWordWrap(True)
+        self.question_text.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.question_text.setStyleSheet("""
-            background-color: white; 
-            padding: 15px; 
-            border-radius: 8px; 
-            border: 1px solid #ced4da;
-            font-size: 16px;
-            min-height: 80px;
+            QLabel {
+                background: rgba(102, 126, 234, 0.1);
+                border: 2px solid rgba(102, 126, 234, 0.2);
+                border-radius: 12px;
+                padding: 20px;
+                font-size: 18px;
+                line-height: 1.4;
+                color: #2d3748;
+                min-height: 60px;
+            }
         """)
-        card_layout.addWidget(self.question_text)
+        question_layout.addWidget(self.question_text)
         
-        # Show Answer button
-        self.show_answer_btn = QPushButton("Show Answer")
-        self.show_answer_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #007bff;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 6px;
-                font-size: 14px;
+        card_layout.addWidget(self.question_container)
+        
+        # Answer section (initially hidden)
+        self.answer_container = QWidget()
+        self.answer_container.setVisible(False)
+        answer_layout = QVBoxLayout(self.answer_container)
+        answer_layout.setSpacing(12)
+        
+        self.answer_label = QLabel("Answer")
+        self.answer_label.setStyleSheet("""
+            QLabel {
+                color: #48bb78;
+                font-size: 18px;
                 font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #0056b3;
+                margin-bottom: 5px;
             }
         """)
-        self.show_answer_btn.clicked.connect(self.show_answer)
-        card_layout.addWidget(self.show_answer_btn)
-        
-        # Answer (initially hidden)
-        self.answer_label = QLabel("Answer:")
-        self.answer_label.setStyleSheet("font-weight: bold; color: #28a745; font-size: 14px; margin-top: 10px;")
-        self.answer_label.setVisible(False)
-        card_layout.addWidget(self.answer_label)
+        answer_layout.addWidget(self.answer_label)
         
         self.answer_text = QLabel()
         self.answer_text.setWordWrap(True)
+        self.answer_text.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.answer_text.setStyleSheet("""
-            background-color: white; 
-            padding: 15px; 
-            border-radius: 8px; 
-            border: 1px solid #ced4da;
-            font-size: 16px;
-            min-height: 80px;
+            QLabel {
+                background: rgba(72, 187, 120, 0.1);
+                border: 2px solid rgba(72, 187, 120, 0.2);
+                border-radius: 12px;
+                padding: 20px;
+                font-size: 18px;
+                line-height: 1.4;
+                color: #2d3748;
+                min-height: 60px;
+            }
         """)
-        self.answer_text.setVisible(False)
-        card_layout.addWidget(self.answer_text)
+        answer_layout.addWidget(self.answer_text)
         
-        # Rating buttons (initially hidden)
-        self.rating_widget = QWidget()
-        rating_layout = QVBoxLayout(self.rating_widget)
+        card_layout.addWidget(self.answer_container)
         
-        rating_instruction = QLabel("How well did you remember this card?")
-        rating_instruction.setStyleSheet("font-weight: bold; text-align: center; margin: 10px;")
-        rating_instruction.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        rating_layout.addWidget(rating_instruction)
+        main_layout.addWidget(self.card_container)
         
-        buttons_layout = QHBoxLayout()
+        # Action section
+        actions_layout = QVBoxLayout()
+        actions_layout.setSpacing(15)
         
-        # Again button (Rating.Again = 1)
-        self.again_btn = QPushButton("Again\n(Forgot)")
-        self.again_btn.setStyleSheet("""
+        # Show answer button
+        self.show_answer_btn = QPushButton("Show Answer")
+        self.show_answer_btn.setStyleSheet("""
             QPushButton {
-                background-color: #dc3545;
-                color: white;
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                    stop: 0 #667eea, stop: 1 #764ba2);
                 border: none;
-                padding: 15px;
-                border-radius: 8px;
-                font-size: 12px;
+                border-radius: 15px;
+                color: white;
+                font-size: 18px;
                 font-weight: bold;
-                min-width: 80px;
+                padding: 15px 40px;
+                min-height: 20px;
             }
             QPushButton:hover {
-                background-color: #c82333;
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                    stop: 0 #5a67d8, stop: 1 #6b46c1);
+                transform: translateY(-2px);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                    stop: 0 #4c51bf, stop: 1 #553c9a);
             }
         """)
+        self.show_answer_btn.clicked.connect(self.show_answer)
+        actions_layout.addWidget(self.show_answer_btn, alignment=Qt.AlignmentFlag.AlignCenter)
+        
+        # Rating section (initially hidden)
+        self.rating_section = QWidget()
+        self.rating_section.setVisible(False)
+        rating_layout = QVBoxLayout(self.rating_section)
+        rating_layout.setSpacing(15)
+        
+        # Rating instruction
+        rating_instruction = QLabel("How well did you remember this card?")
+        rating_instruction.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        rating_instruction.setStyleSheet("""
+            QLabel {
+                color: white;
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+        """)
+        rating_layout.addWidget(rating_instruction)
+        
+        # Rating buttons in a horizontal layout
+        buttons_container = QWidget()
+        buttons_layout = QHBoxLayout(buttons_container)
+        buttons_layout.setSpacing(10)  # Smaller spacing for mobile
+        
+        # Again button
+        self.again_btn = QPushButton("Again")
+        self.again_btn.setStyleSheet(self.get_rating_button_style("#ef4444", "#dc2626", "#b91c1c", "white"))
         self.again_btn.clicked.connect(lambda: self.rate_card(Rating.Again))
         buttons_layout.addWidget(self.again_btn)
         
-        # Hard button (Rating.Hard = 2)
-        self.hard_btn = QPushButton("Hard\n(Difficult)")
-        self.hard_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #fd7e14;
-                color: white;
-                border: none;
-                padding: 15px;
-                border-radius: 8px;
-                font-size: 12px;
-                font-weight: bold;
-                min-width: 80px;
-            }
-            QPushButton:hover {
-                background-color: #e8690b;
-            }
-        """)
+        # Hard button
+        self.hard_btn = QPushButton("Hard")
+        self.hard_btn.setStyleSheet(self.get_rating_button_style("#f97316", "#ea580c", "#c2410c", "white"))
         self.hard_btn.clicked.connect(lambda: self.rate_card(Rating.Hard))
         buttons_layout.addWidget(self.hard_btn)
         
-        # Good button (Rating.Good = 3)
-        self.good_btn = QPushButton("Good\n(Hesitated)")
-        self.good_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #28a745;
-                color: white;
-                border: none;
-                padding: 15px;
-                border-radius: 8px;
-                font-size: 12px;
-                font-weight: bold;
-                min-width: 80px;
-            }
-            QPushButton:hover {
-                background-color: #218838;
-            }
-        """)
+        # Good button
+        self.good_btn = QPushButton("Good")
+        self.good_btn.setStyleSheet(self.get_rating_button_style("#22c55e", "#16a34a", "#15803d", "white"))
         self.good_btn.clicked.connect(lambda: self.rate_card(Rating.Good))
         buttons_layout.addWidget(self.good_btn)
         
-        # Easy button (Rating.Easy = 4)
-        self.easy_btn = QPushButton("Easy\n(Perfect)")
-        self.easy_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #6f42c1;
-                color: white;
-                border: none;
-                padding: 15px;
-                border-radius: 8px;
-                font-size: 12px;
-                font-weight: bold;
-                min-width: 80px;
-            }
-            QPushButton:hover {
-                background-color: #5a359a;
-            }
-        """)
+        # Easy button
+        self.easy_btn = QPushButton("Easy")
+        self.easy_btn.setStyleSheet(self.get_rating_button_style("#8b5cf6", "#7c3aed", "#6d28d9", "white"))
         self.easy_btn.clicked.connect(lambda: self.rate_card(Rating.Easy))
         buttons_layout.addWidget(self.easy_btn)
         
-        rating_layout.addLayout(buttons_layout)
-        self.rating_widget.setVisible(False)
-        card_layout.addWidget(self.rating_widget)
+        rating_layout.addWidget(buttons_container)
+        actions_layout.addWidget(self.rating_section)
         
-        main_layout.addWidget(self.card_frame)
+        main_layout.addLayout(actions_layout)
         
-        # Bottom buttons
+        # Spacer to push everything up
+        main_layout.addSpacerItem(QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        
+        # Bottom controls
         bottom_layout = QHBoxLayout()
         
-        self.finish_btn = QPushButton("Finish Practice")
+        self.finish_btn = QPushButton("Finish Session")
+        self.finish_btn.setStyleSheet("""
+            QPushButton {
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 10px;
+                color: white;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 10px 20px;
+            }
+            QPushButton:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.5);
+            }
+        """)
         self.finish_btn.clicked.connect(self.finish_practice)
+        
+        bottom_layout.addStretch()
         bottom_layout.addWidget(self.finish_btn)
         
         main_layout.addLayout(bottom_layout)
+        
+    def get_rating_button_style(self, primary, hover, pressed, text_color):
+        return f"""
+            QPushButton {{
+                background: {primary};
+                border: none;
+                border-radius: 12px;
+                color: {text_color};
+                font-size: 14px;
+                font-weight: bold;
+                padding: 15px 20px;
+                min-width: 60px;
+                min-height: 15px;
+            }}
+            QPushButton:hover {{
+                background: {hover};
+                transform: translateY(-2px);
+            }}
+            QPushButton:pressed {{
+                background: {pressed};
+                transform: translateY(0px);
+            }}
+        """
         
     def load_due_cards(self):
         """Load cards that are due for review"""
@@ -235,8 +323,8 @@ class PracticeDialog(QDialog):
             
         current_card = self.due_cards[self.current_card_index]
         
-        # Update header
-        self.header_label.setText(f"Practice Session - Card {self.current_card_index + 1} of {len(self.due_cards)}")
+        # Update progress
+        self.progress_label.setText(f"Card {self.current_card_index + 1} of {len(self.due_cards)}")
         
         # Update question
         self.question_text.setText(current_card.question)
@@ -246,16 +334,14 @@ class PracticeDialog(QDialog):
         
         # Reset visibility
         self.show_answer_btn.setVisible(True)
-        self.answer_label.setVisible(False)
-        self.answer_text.setVisible(False)
-        self.rating_widget.setVisible(False)
+        self.answer_container.setVisible(False)
+        self.rating_section.setVisible(False)
         
     def show_answer(self):
-        """Show the answer and rating buttons"""
+        """Show the answer and rating buttons with animation"""
         self.show_answer_btn.setVisible(False)
-        self.answer_label.setVisible(True)
-        self.answer_text.setVisible(True)
-        self.rating_widget.setVisible(True)
+        self.answer_container.setVisible(True)
+        self.rating_section.setVisible(True)
         
     def rate_card(self, rating):
         """Rate the current card and move to next"""
@@ -289,8 +375,8 @@ class PracticeDialog(QDialog):
                 self.app.save_user()
                 
                 QMessageBox.information(self, "Practice Complete", 
-                    f"Great job! You reviewed {self.cards_reviewed} cards.\n\n"
-                    f"Your progress has been saved.")
+                    f"Excellent work! 🎉\n\nYou reviewed {self.cards_reviewed} cards.\n"
+                    f"Your progress has been saved.\n\nKeep up the great studying!")
             except Exception as e:
                 QMessageBox.warning(self, "Save Error", f"Failed to save progress: {str(e)}")
         else:

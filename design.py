@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QMainWindow, QMenuBar, QPushButton, QSizePolicy,
-    QStatusBar, QTextEdit, QVBoxLayout, QWidget)
+    QStatusBar, QTextEdit, QVBoxLayout, QWidget, QSpacerItem)
 from PySide6.QtGui import QAction
 
 class Ui_MainWindow(object):
@@ -28,85 +28,92 @@ class Ui_MainWindow(object):
         MainWindow.setDocumentMode(False)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayoutWidget = QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(10, 0, 111, 551))
-        self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
+        
+        self.mainHorizontalLayout = QHBoxLayout(self.centralwidget)
+        self.mainHorizontalLayout.setObjectName(u"mainHorizontalLayout")
+        
+        self.sidebarWidget = QWidget(self.centralwidget)
+        self.sidebarWidget.setObjectName(u"sidebarWidget")
+        self.sidebarWidget.setMaximumSize(QSize(250, 16777215))
+        self.sidebarWidget.setMinimumSize(QSize(200, 0))
+        
+        self.verticalLayout = QVBoxLayout(self.sidebarWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.pushButton = QPushButton(self.verticalLayoutWidget)
+        
+        self.pushButton = QPushButton(self.sidebarWidget)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setAutoDefault(False)
-
+        self.pushButton.setDefault(True)
         self.verticalLayout.addWidget(self.pushButton)
 
-        self.label = QLabel(self.verticalLayoutWidget)
+        self.label = QLabel(self.sidebarWidget)
         self.label.setObjectName(u"label")
         self.label.setFrameShape(QFrame.Shape.NoFrame)
         self.label.setFrameShadow(QFrame.Shadow.Plain)
-
         self.verticalLayout.addWidget(self.label)
+        
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalLayout.addItem(self.verticalSpacer)
+        
+        self.mainHorizontalLayout.addWidget(self.sidebarWidget)
 
-        self.verticalLayoutWidget_2 = QWidget(self.centralwidget)
-        self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
-        self.verticalLayoutWidget_2.setGeometry(QRect(129, 3, 511, 551))
-        self.AddCartIntaerfaceLayout = QVBoxLayout(self.verticalLayoutWidget_2)
+        self.contentWidget = QWidget(self.centralwidget)
+        self.contentWidget.setObjectName(u"contentWidget")
+        
+        self.AddCartIntaerfaceLayout = QVBoxLayout(self.contentWidget)
         self.AddCartIntaerfaceLayout.setObjectName(u"AddCartIntaerfaceLayout")
-        self.AddCartIntaerfaceLayout.setContentsMargins(0, 0, 0, 0)
+        
         self.CardDescripitionLayout = QHBoxLayout()
         self.CardDescripitionLayout.setObjectName(u"CardDescripitionLayout")
-        self.CardDescriptionLabel = QLabel(self.verticalLayoutWidget_2)
+        
+        self.CardDescriptionLabel = QLabel(self.contentWidget)
         self.CardDescriptionLabel.setObjectName(u"CardDescriptionLabel")
-        self.CardDescriptionLabel.setMinimumSize(QSize(175, 0))
-        self.CardDescriptionLabel.setMaximumSize(QSize(175, 70))
-
+        self.CardDescriptionLabel.setMinimumSize(QSize(150, 0))
+        self.CardDescriptionLabel.setMaximumSize(QSize(150, 70))
         self.CardDescripitionLayout.addWidget(self.CardDescriptionLabel)
 
-        self.CardDescriptionTextEdit = QTextEdit(self.verticalLayoutWidget_2)
+        self.CardDescriptionTextEdit = QTextEdit(self.contentWidget)
         self.CardDescriptionTextEdit.setObjectName(u"CardDescriptionTextEdit")
-
         self.CardDescripitionLayout.addWidget(self.CardDescriptionTextEdit)
-
 
         self.AddCartIntaerfaceLayout.addLayout(self.CardDescripitionLayout)
 
         self.CardAnswerLayout = QHBoxLayout()
         self.CardAnswerLayout.setObjectName(u"CardAnswerLayout")
-        self.CardAnswerLabel = QLabel(self.verticalLayoutWidget_2)
+        
+        self.CardAnswerLabel = QLabel(self.contentWidget)
         self.CardAnswerLabel.setObjectName(u"CardAnswerLabel")
-        self.CardAnswerLabel.setMinimumSize(QSize(175, 0))
-        self.CardAnswerLabel.setMaximumSize(QSize(175, 16777215))
-
+        self.CardAnswerLabel.setMinimumSize(QSize(150, 0))
+        self.CardAnswerLabel.setMaximumSize(QSize(150, 16777215))
         self.CardAnswerLayout.addWidget(self.CardAnswerLabel)
 
-        self.textEdit = QTextEdit(self.verticalLayoutWidget_2)
+        self.textEdit = QTextEdit(self.contentWidget)
         self.textEdit.setObjectName(u"textEdit")
-
         self.CardAnswerLayout.addWidget(self.textEdit)
-
 
         self.AddCartIntaerfaceLayout.addLayout(self.CardAnswerLayout)
 
-        self.addCartButton = QPushButton(self.verticalLayoutWidget_2)
+        self.buttonsLayout = QHBoxLayout()
+        self.buttonsLayout.setObjectName(u"buttonsLayout")
+        
+        self.addCartButton = QPushButton(self.contentWidget)
         self.addCartButton.setObjectName(u"addCartButton")
-        self.addCartButton.setMaximumSize(QSize(16777215, 16777215))
-        self.addCartButton.setFlat(False)
+        self.buttonsLayout.addWidget(self.addCartButton)
 
-        self.AddCartIntaerfaceLayout.addWidget(self.addCartButton)
-
-        self.viewCardsButton = QPushButton(self.verticalLayoutWidget_2)
+        self.viewCardsButton = QPushButton(self.contentWidget)
         self.viewCardsButton.setObjectName(u"viewCardsButton")
-        self.viewCardsButton.setMaximumSize(QSize(16777215, 16777215))
-        self.viewCardsButton.setFlat(False)
+        self.buttonsLayout.addWidget(self.viewCardsButton)
 
-        self.AddCartIntaerfaceLayout.addWidget(self.viewCardsButton)
-
-        self.practiceButton = QPushButton(self.verticalLayoutWidget_2)
+        self.practiceButton = QPushButton(self.contentWidget)
         self.practiceButton.setObjectName(u"practiceButton")
-        self.practiceButton.setMaximumSize(QSize(16777215, 16777215))
-        self.practiceButton.setFlat(False)
+        self.buttonsLayout.addWidget(self.practiceButton)
+        
+        self.AddCartIntaerfaceLayout.addLayout(self.buttonsLayout)
+        
+        self.contentVerticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.AddCartIntaerfaceLayout.addItem(self.contentVerticalSpacer)
 
-        self.AddCartIntaerfaceLayout.addWidget(self.practiceButton)
+        self.mainHorizontalLayout.addWidget(self.contentWidget)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -126,7 +133,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.pushButton.setDefault(True)
-
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi

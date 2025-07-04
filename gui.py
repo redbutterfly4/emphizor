@@ -29,6 +29,7 @@ class MainWindow(QMainWindow):
             
         self.ui = Ui_MainWindow() 
         self.ui.setupUi(self)  # setting ui from Qt Designer
+        self.setup_modern_styling()  # Apply modern styling
         self.ui.pushButton.clicked.connect(self.add_tag_clicked)  # connect "Add tag button" with slot
         self.ui.addCartButton.clicked.connect(self.add_card_clicked)  # connect "Add card button" with slot
         self.ui.viewCardsButton.clicked.connect(self.view_cards_clicked)  # connect "View Cards button" with slot
@@ -41,6 +42,10 @@ class MainWindow(QMainWindow):
             self.update_status_bar()
             # Load existing tags from user's cards
             self.load_existing_tags()
+            
+        # Make window responsive with better minimum sizes
+        self.resize(1000, 700)
+        self.setMinimumSize(600, 400)  # Smaller minimum for better small screen support
         
     def authenticate_user(self):
         """Show authentication dialog and return True if successful"""
@@ -50,6 +55,239 @@ class MainWindow(QMainWindow):
             self.user = auth_dialog.get_user()
             return True
         return False
+        
+    def setup_modern_styling(self):
+        """Apply modern styling to the application"""
+        # Main window styling with purple theme like practice UI
+        self.setStyleSheet("""
+            QMainWindow {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 #667eea, stop: 1 #764ba2);
+                color: white;
+            }
+            
+            QWidget {
+                background: transparent;
+            }
+            
+            QLabel {
+                color: white;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            
+            QPushButton {
+                background: rgba(255, 255, 255, 0.95);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 15px;
+                padding: 12px 20px;
+                font-weight: 700;
+                font-size: 14px;
+                color: #4c1d95;
+                min-height: 20px;
+            }
+            
+            QPushButton:hover {
+                background: white;
+                border-color: rgba(102, 126, 234, 0.5);
+                color: #5a67d8;
+                transform: translateY(-2px);
+            }
+            
+            QPushButton:pressed {
+                background: rgba(240, 240, 240, 0.9);
+                border-color: #5a67d8;
+                color: #4c1d95;
+                transform: translateY(0px);
+            }
+            
+            QPushButton:checked {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                border-color: #6d28d9;
+                color: white;
+            }
+            
+            QTextEdit {
+                background: rgba(255, 255, 255, 0.98);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 15px;
+                padding: 15px;
+                font-size: 16px;
+                color: #4c1d95;
+                selection-background-color: #8b5cf6;
+                selection-color: white;
+            }
+            
+            QTextEdit:focus {
+                border-color: rgba(139, 92, 246, 0.8);
+                background: white;
+                color: #4c1d95;
+            }
+            
+            QMenuBar {
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                font-size: 14px;
+                padding: 5px;
+            }
+            
+            QMenuBar::item {
+                padding: 8px 16px;
+                border-radius: 6px;
+                background: transparent;
+                color: white;
+            }
+            
+            QMenuBar::item:selected {
+                background: rgba(139, 92, 246, 0.3);
+                color: white;
+            }
+            
+            QMenu {
+                background: rgba(255, 255, 255, 0.98);
+                border: 2px solid rgba(139, 92, 246, 0.3);
+                border-radius: 12px;
+                padding: 8px;
+            }
+            
+            QMenu::item {
+                padding: 8px 16px;
+                border-radius: 6px;
+                color: #4c1d95;
+            }
+            
+            QMenu::item:selected {
+                background: rgba(139, 92, 246, 0.2);
+                color: #6d28d9;
+            }
+            
+            QStatusBar {
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                font-size: 13px;
+                padding: 5px;
+            }
+        """)
+        
+        # Style specific buttons with purple theme
+        if hasattr(self.ui, 'addCartButton'):
+            self.ui.addCartButton.setStyleSheet("""
+                QPushButton {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    border: 2px solid #6d28d9;
+                    border-radius: 15px;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 15px 25px;
+                    min-height: 25px;
+                }
+                QPushButton:hover {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    border-color: #8b5cf6;
+                    color: white;
+                    transform: translateY(-3px);
+                }
+                QPushButton:pressed {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    color: white;
+                    transform: translateY(0px);
+                }
+            """)
+        
+        if hasattr(self.ui, 'viewCardsButton'):
+            self.ui.viewCardsButton.setStyleSheet("""
+                QPushButton {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #c084fc, stop: 1 #a855f7);
+                    border: 2px solid #9333ea;
+                    border-radius: 15px;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 15px 25px;
+                    min-height: 25px;
+                }
+                QPushButton:hover {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #ddd6fe, stop: 1 #c084fc);
+                    border-color: #c084fc;
+                    color: white;
+                    transform: translateY(-3px);
+                }
+                QPushButton:pressed {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #a855f7, stop: 1 #9333ea);
+                    color: white;
+                    transform: translateY(0px);
+                }
+            """)
+        
+        if hasattr(self.ui, 'practiceButton'):
+            self.ui.practiceButton.setStyleSheet("""
+                QPushButton {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    border: 2px solid #6d28d9;
+                    border-radius: 15px;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 15px 25px;
+                    min-height: 25px;
+                }
+                QPushButton:hover {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    border-color: #8b5cf6;
+                    color: white;
+                    transform: translateY(-3px);
+                }
+                QPushButton:pressed {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    color: white;
+                    transform: translateY(0px);
+                }
+            """)
+        
+        if hasattr(self.ui, 'pushButton'):
+            self.ui.pushButton.setStyleSheet("""
+                QPushButton {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #c084fc, stop: 1 #a855f7);
+                    border: 2px solid #9333ea;
+                    border-radius: 15px;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 15px 25px;
+                    min-height: 25px;
+                }
+                QPushButton:hover {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #ddd6fe, stop: 1 #c084fc);
+                    border-color: #c084fc;
+                    color: white;
+                    transform: translateY(-3px);
+                }
+                QPushButton:pressed {
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #a855f7, stop: 1 #9333ea);
+                    color: white;
+                    transform: translateY(0px);
+                }
+            """)
         
     def load_existing_tags(self):
         """Load and display existing tags from user's cards"""
@@ -70,14 +308,25 @@ class MainWindow(QMainWindow):
                 button.setCheckable(True)
                 button.setStyleSheet("""
                     QPushButton {
-                        background-color: #e0e0e0;
-                        border: 1px solid #ccc;
-                        border-radius: 4px;
-                        padding: 5px;
-                        margin: 2px;
+                        background: rgba(255, 255, 255, 0.9);
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 12px;
+                        padding: 8px 12px;
+                        margin: 3px;
+                        font-weight: 600;
+                        font-size: 13px;
+                        color: #4c1d95;
+                        min-width: 60px;
+                    }
+                    QPushButton:hover {
+                        background: white;
+                        border-color: rgba(139, 92, 246, 0.5);
+                        color: #6d28d9;
                     }
                     QPushButton:checked {
-                        background-color: #4CAF50;
+                        background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                            stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                        border-color: #6d28d9;
                         color: white;
                     }
                 """)
@@ -106,7 +355,7 @@ class MainWindow(QMainWindow):
         total_cards = len(self.user.full_cards)
         due_cards = self.count_due_cards()
         
-        status_text = f"Logged in as {self.user.name} | {total_cards} cards total | {due_cards} due for review"
+        status_text = f"Welcome, {self.user.name} ✨ | {total_cards} cards total | {due_cards} due for review"
         self.statusBar().showMessage(status_text, 10000)
         
     def create_enter_string_dialog(self, label_message, title):
@@ -122,14 +371,25 @@ class MainWindow(QMainWindow):
             button.setCheckable(True)  # Make tags selectable
             button.setStyleSheet("""
                 QPushButton {
-                    background-color: #e0e0e0;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    padding: 5px;
-                    margin: 2px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 12px;
+                    padding: 8px 12px;
+                    margin: 3px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    color: #4c1d95;
+                    min-width: 60px;
+                }
+                QPushButton:hover {
+                    background: white;
+                    border-color: rgba(139, 92, 246, 0.5);
+                    color: #6d28d9;
                 }
                 QPushButton:checked {
-                    background-color: #4CAF50;
+                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    border-color: #6d28d9;
                     color: white;
                 }
             """)
@@ -167,11 +427,11 @@ class MainWindow(QMainWindow):
             return
             
         try:
-            self.statusBar().showMessage("Saving...", 2000)
+            self.statusBar().showMessage("Saving... 💾", 2000)
             self.app.save_user()
-            self.statusBar().showMessage("Data saved successfully!", 3000)
+            self.statusBar().showMessage("Data saved successfully! ✅", 3000)
         except Exception as e:
-            self.statusBar().showMessage("Save failed!", 3000)
+            self.statusBar().showMessage("Save failed! ❌", 3000)
             QMessageBox.warning(self, "Error", f"Failed to save: {str(e)}")
             
     def closeEvent(self, event):
@@ -231,7 +491,7 @@ class MainWindow(QMainWindow):
             for button in self.tag_buttons:
                 button.setChecked(False)
                 
-            self.statusBar().showMessage("Card added and saved successfully!", 3000)
+            self.statusBar().showMessage("Card added successfully! 🎉", 3000)
             # Update status bar with new card count after a delay
             self.update_status_bar()
             
