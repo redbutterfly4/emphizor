@@ -398,7 +398,7 @@ class MainWindow(QMainWindow):
             
     def add_tag_clicked(self):
         self.create_enter_string_dialog('Enter tag: ', 'Add tag')
-        
+        self.enter_string_dialog.exec()
     def view_cards_clicked(self):
         """Show the view cards dialog"""
         if not self.user:
