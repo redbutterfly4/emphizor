@@ -77,7 +77,7 @@
     </item>
     <item>
      <widget class="QWidget" name="contentWidget">
-      <layout class="QVBoxLayout" name="AddCartIntaerfaceLayout">
+      <layout class="QVBoxLayout" name="AddCardInterfaceLayout">
        <item>
         <layout class="QHBoxLayout" name="CardDescripitionLayout">
          <item>
