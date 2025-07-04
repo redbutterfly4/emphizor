@@ -18,6 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QMainWindow, QMenuBar, QPushButton, QSizePolicy,
     QStatusBar, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtGui import QAction
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -93,14 +94,34 @@ class Ui_MainWindow(object):
 
         self.AddCartIntaerfaceLayout.addWidget(self.addCartButton)
 
+        self.viewCardsButton = QPushButton(self.verticalLayoutWidget_2)
+        self.viewCardsButton.setObjectName(u"viewCardsButton")
+        self.viewCardsButton.setMaximumSize(QSize(16777215, 16777215))
+        self.viewCardsButton.setFlat(False)
+
+        self.AddCartIntaerfaceLayout.addWidget(self.viewCardsButton)
+
+        self.practiceButton = QPushButton(self.verticalLayoutWidget_2)
+        self.practiceButton.setObjectName(u"practiceButton")
+        self.practiceButton.setMaximumSize(QSize(16777215, 16777215))
+        self.practiceButton.setFlat(False)
+
+        self.AddCartIntaerfaceLayout.addWidget(self.practiceButton)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 800, 23))
+        self.menuFile = self.menubar.addMenu(u"File")
+        self.menuFile.setObjectName(u"menuFile")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+
+        self.actionSave = QAction(MainWindow)
+        self.actionSave.setObjectName(u"actionSave")
+        self.menuFile.addAction(self.actionSave)
 
         self.retranslateUi(MainWindow)
 
@@ -116,6 +137,10 @@ class Ui_MainWindow(object):
         self.label.setText(QCoreApplication.translate("MainWindow", u"Your tags:", None))
         self.CardDescriptionLabel.setText(QCoreApplication.translate("MainWindow", u"Enter card description:", None))
         self.CardAnswerLabel.setText(QCoreApplication.translate("MainWindow", u"Enter card answer:", None))
-        self.addCartButton.setText(QCoreApplication.translate("MainWindow", u"Add cart", None))
+        self.addCartButton.setText(QCoreApplication.translate("MainWindow", u"Add card", None))
+        self.viewCardsButton.setText(QCoreApplication.translate("MainWindow", u"View Cards", None))
+        self.practiceButton.setText(QCoreApplication.translate("MainWindow", u"Practice", None))
+        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.actionSave.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+S", None))
     # retranslateUi
 
