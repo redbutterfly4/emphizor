@@ -24,11 +24,7 @@ class ViewCardsDialog(QDialog):
             }
             QScrollArea {
                 border: none;
-                background: transparent;
                 border-radius: 15px;
-            }
-            QScrollArea QWidget {
-                background: transparent;
             }
             QScrollBar:vertical {
                 background: rgba(255, 255, 255, 0.1);

@@ -66,10 +66,6 @@ class MainWindow(QMainWindow):
                 color: white;
             }
             
-            QWidget {
-                background: transparent;
-            }
-            
             QLabel {
                 color: white;
                 font-weight: 600;
@@ -138,7 +134,6 @@ class MainWindow(QMainWindow):
             QMenuBar::item {
                 padding: 8px 16px;
                 border-radius: 6px;
-                background: transparent;
                 color: white;
             }
             
