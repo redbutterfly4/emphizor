@@ -192,19 +192,19 @@ class EnterStringDialog(QDialog):
         self.char_counter.setText(f"{current_length}/{self.len_limit}")
         
         # Change color based on character count
-        if current_length >= self.len_limit * 0.9:
+        if current_length >= self.len_limit:
             self.char_counter.setStyleSheet("""
                 QLabel {
-                    color: #fbbf24;
+                    color: #dc2626;
                     font-size: 12px;
                     font-weight: 600;
                     margin-top: 3px;
                 }
             """)
-        elif current_length >= self.len_limit:
+        elif current_length >= self.len_limit * 0.9:
             self.char_counter.setStyleSheet("""
                 QLabel {
-                    color: #dc2626;
+                    color: #fbbf24;
                     font-size: 12px;
                     font-weight: 600;
                     margin-top: 3px;
