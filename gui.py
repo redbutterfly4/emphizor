@@ -10,14 +10,14 @@ from base_classes import FullCard, App
 from fsrs import Card
 
 class MainWindow(QMainWindow):
-    tags: list[str]
+    tags: set
     tag_buttons: list[QPushButton]
     tag_len_limit = 50
     enter_string_dialog: EnterStringDialog
     
     def __init__(self):
         super().__init__()
-        self.tags = []  # Initialize the tags attribute as an empty list
+        self.tags = set()  # Initialize the tags attribute as an empty set
         self.tag_buttons = []  # Initialize empty list of buttons
         self.app = None
         self.user = None
@@ -65,6 +65,7 @@ class MainWindow(QMainWindow):
                     stop: 0 #667eea, stop: 1 #764ba2);
                 color: white;
             }
+
             
             QLabel {
                 color: white;
@@ -134,6 +135,7 @@ class MainWindow(QMainWindow):
             QMenuBar::item {
                 padding: 8px 16px;
                 border-radius: 6px;
+                background: transparent;
                 color: white;
             }
             
@@ -297,7 +299,7 @@ class MainWindow(QMainWindow):
         # Add tag buttons for each unique tag
         for tag in sorted(all_tags):
             if tag not in self.tags:
-                self.tags.append(tag)
+                self.tags.add(tag)
                 button = QPushButton(self)
                 button.setText(tag)
                 button.setCheckable(True)
@@ -360,7 +362,7 @@ class MainWindow(QMainWindow):
     def add_tag_button(self):
         tag_text = self.enter_string_dialog.line_edit.text()
         if tag_text not in self.tags:
-            self.tags.append(tag_text)
+            self.tags.add(tag_text)
             button = QPushButton(self)
             button.setText(tag_text)
             button.setCheckable(True)  # Make tags selectable
@@ -463,10 +465,10 @@ class MainWindow(QMainWindow):
                 return
                 
             # Get selected tags
-            selected_tags = []
+            selected_tags = set()
             for button in self.tag_buttons:
                 if button.isChecked():
-                    selected_tags.append(button.text())
+                    selected_tags.add(button.text())
                     
             # Create new card
             card = Card()

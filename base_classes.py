@@ -8,20 +8,20 @@ class FullCard:
     card: Card
     question: str
     answer: str
-    tags: list[str]
+    tags: set
     
-    def __init__(self, card: Card, question: str, answer: str, tags: list[str]):
+    def __init__(self, card: Card, question: str, answer: str, tags: set):
         self.card = card
         self.question = question
         self.answer = answer
-        self.tags = tags
+        self.tags = set(tags)
     
     def to_dict(self):
         return {
             "card": self.card.to_dict(),
             "question": self.question,
             "answer": self.answer,
-            "tags": self.tags,
+            "tags": sorted(list(self.tags)),
         }
 
 

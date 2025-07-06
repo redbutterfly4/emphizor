@@ -301,10 +301,14 @@ class PracticeDialog(QDialog):
             return
             
         now = datetime.now(timezone.utc)
+        selected_tags = set()
+        for button in self.parent().tag_buttons:
+            if button.isChecked():
+                selected_tags.add(button.text())
         self.due_cards = []
         
         for full_card in self.user.full_cards:
-            if full_card.card.due <= now:
+            if full_card.card.due <= now and full_card.tags <= selected_tags:
                 self.due_cards.append(full_card)
         
         if not self.due_cards:
