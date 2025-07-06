@@ -419,7 +419,8 @@ class MainWindow(QMainWindow):
             return
             
         practice_dialog = PracticeDialog(self.user, self.app, self)
-        practice_dialog.exec()
+        if practice_dialog.cant_practice is False:
+            practice_dialog.exec()
         
         # Update status bar after practice session
         self.update_status_bar()
