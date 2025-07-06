@@ -13,7 +13,7 @@ class AuthDialog(QDialog):
         
     def setup_ui(self):
         self.setWindowTitle("Welcome to Emphizor")
-        self.resize(600, 500)
+        self.resize(800, 800)
         self.setMinimumSize(400, 300)  # Better minimum for small screens
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
@@ -52,9 +52,7 @@ class AuthDialog(QDialog):
                 border-color: rgba(139, 92, 246, 0.8);
                 color: #4c1d95;
             }
-            QWidget {
-                background: transparent;
-            }
+            
             QLineEdit {
                 background: rgba(255, 255, 255, 0.98);
                 border: 2px solid rgba(139, 92, 246, 0.3);
