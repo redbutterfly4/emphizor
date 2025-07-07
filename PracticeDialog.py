@@ -26,12 +26,13 @@ class PracticeDialog(QDialog):
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
         # Apply modern purple gradient styling like original practice UI
-        self.setStyleSheet("""
-            QDialog {
+        self.setStyleSheet(f"""
+            QDialog {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+                    stop: 0 {self.parent().color_profile.main_color.name()}, stop: 1 {self.parent().color_profile.gradient_end_color.name()});
                 color: white;
-            }
+            
+            }}
         """)
         
         # Main layout with responsive spacing
@@ -91,30 +92,30 @@ class PracticeDialog(QDialog):
         question_layout.setSpacing(12)
         
         self.question_label = QLabel("Question")
-        self.question_label.setStyleSheet("""
-            QLabel {
-                color: #667eea;
+        self.question_label.setStyleSheet(f"""
+            QLabel {{
+                color: {self.parent().color_profile.main_color.name()}
                 font-size: 18px;
                 font-weight: bold;
                 margin-bottom: 5px;
-            }
+            }}
         """)
         question_layout.addWidget(self.question_label)
         
         self.question_text = QLabel()
         self.question_text.setWordWrap(True)
         self.question_text.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.question_text.setStyleSheet("""
-            QLabel {
-                background: rgba(102, 126, 234, 0.1);
-                border: 2px solid rgba(102, 126, 234, 0.2);
+        self.question_text.setStyleSheet(f"""
+            QLabel {{
+                background: {self.parent().color_profile.main_color.darker(105).name()};
+                border: 2px solid {self.parent().color_profile.main_color.darker(115).name()};
                 border-radius: 12px;
                 padding: 20px;
                 font-size: 18px;
                 line-height: 1.4;
                 color: #2d3748;
                 min-height: 60px;
-            }
+            }}
         """)
         question_layout.addWidget(self.question_text)
         
@@ -164,10 +165,10 @@ class PracticeDialog(QDialog):
         
         # Show answer button
         self.show_answer_btn = QPushButton("Show Answer")
-        self.show_answer_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+        self.show_answer_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 border: none;
                 border-radius: 15px;
                 color: white;
@@ -175,16 +176,16 @@ class PracticeDialog(QDialog):
                 font-weight: bold;
                 padding: 15px 40px;
                 min-height: 20px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
-                    stop: 0 #5a67d8, stop: 1 #6b46c1);
+            }}
+            QPushButton:hover {{
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(120).name()});
                 transform: translateY(-2px);
-            }
-            QPushButton:pressed {
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
-                    stop: 0 #4c51bf, stop: 1 #553c9a);
-            }
+            }}
+            QPushButton:pressed {{
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
+                }}
         """)
         self.show_answer_btn.clicked.connect(self.show_answer)
         actions_layout.addWidget(self.show_answer_btn, alignment=Qt.AlignmentFlag.AlignCenter)
