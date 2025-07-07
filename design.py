@@ -60,8 +60,8 @@ class Ui_MainWindow(object):
         self.contentWidget = QWidget(self.centralwidget)
         self.contentWidget.setObjectName(u"contentWidget")
         
-        self.AddCartIntaerfaceLayout = QVBoxLayout(self.contentWidget)
-        self.AddCartIntaerfaceLayout.setObjectName(u"AddCartIntaerfaceLayout")
+        self.AddCardInterfaceLayout = QVBoxLayout(self.contentWidget)
+        self.AddCardInterfaceLayout.setObjectName(u"AddCardInterfaceLayout")
         
         self.CardDescriptionLayout = QHBoxLayout()
         self.CardDescriptionLayout.setObjectName(u"CardDescriptionLayout")
@@ -76,7 +76,7 @@ class Ui_MainWindow(object):
         self.CardDescriptionTextEdit.setObjectName(u"CardDescriptionTextEdit")
         self.CardDescriptionLayout.addWidget(self.CardDescriptionTextEdit)
 
-        self.AddCartIntaerfaceLayout.addLayout(self.CardDescriptionLayout)
+        self.AddCardInterfaceLayout.addLayout(self.CardDescriptionLayout)
 
         self.CardAnswerLayout = QHBoxLayout()
         self.CardAnswerLayout.setObjectName(u"CardAnswerLayout")
@@ -91,7 +91,7 @@ class Ui_MainWindow(object):
         self.textEdit.setObjectName(u"textEdit")
         self.CardAnswerLayout.addWidget(self.textEdit)
 
-        self.AddCartIntaerfaceLayout.addLayout(self.CardAnswerLayout)
+        self.AddCardInterfaceLayout.addLayout(self.CardAnswerLayout)
 
         self.buttonsLayout = QHBoxLayout()
         self.buttonsLayout.setObjectName(u"buttonsLayout")
@@ -108,10 +108,10 @@ class Ui_MainWindow(object):
         self.practiceButton.setObjectName(u"practiceButton")
         self.buttonsLayout.addWidget(self.practiceButton)
         
-        self.AddCartIntaerfaceLayout.addLayout(self.buttonsLayout)
+        self.AddCardInterfaceLayout.addLayout(self.buttonsLayout)
         
         self.contentVerticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        self.AddCartIntaerfaceLayout.addItem(self.contentVerticalSpacer)
+        self.AddCardInterfaceLayout.addItem(self.contentVerticalSpacer)
 
         self.mainHorizontalLayout.addWidget(self.contentWidget)
 

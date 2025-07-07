@@ -79,7 +79,7 @@
      <widget class="QWidget" name="contentWidget">
       <layout class="QVBoxLayout" name="AddCardInterfaceLayout">
        <item>
-        <layout class="QHBoxLayout" name="CardDescripitionLayout">
+        <layout class="QHBoxLayout" name="CardDescriptionLayout">
          <item>
           <widget class="QLabel" name="CardDescriptionLabel">
            <property name="minimumSize">
