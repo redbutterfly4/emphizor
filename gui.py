@@ -376,32 +376,34 @@ class MainWindow(QMainWindow):
             button.setText(tag_text)
             button.setCheckable(True)  # Make tags selectable
             button.setStyleSheet(f"""
-                QPushButton {{
-                    background: rgba(255, 255, 255, 0.9);
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 12px;
-                    padding: 8px 12px;
-                    margin: 3px;
-                    font-weight: 600;
-                    font-size: 13px;
-                    color: {self.color_profile.main_color.darker(140).name()};
-                    min-width: 60px;
-                }}
-                QPushButton:hover {{
-                    background: white;
-                    border-color: {self.color_profile.gradient_end_color.darker(115).name()};
-                    color: {self.color_profile.gradient_end_color.darker(110).name()};
-                }}
-                QPushButton:checked {{
-                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()})
-                    border-color: {self.color_profile.gradient_end_color.darker(110).name()};
-                    color: white;
-                }}
-            """)
+                    QPushButton {{
+                        background: rgba(255, 255, 255, 0.9);
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 12px;
+                        padding: 8px 12px;
+                        margin: 3px;
+                        font-weight: 600;
+                        font-size: 13px;
+                        color: {self.color_profile.main_color.darker(140).name()};
+                        min-width: 60px;
+                    }}
+                    QPushButton:hover {{
+                        background: white;
+                        border-color: {self.color_profile.gradient_end_color.darker(115).name()};
+                        color: {self.color_profile.gradient_end_color.darker(110).name()};
+                    }}
+                    QPushButton:checked {{
+                        background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                            stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                        border-color: {self.color_profile.gradient_end_color.darker(110).name()};
+                        color: white;
+                    }}
+                """)
             self.ui.verticalLayout.addWidget(button)
             self.tag_buttons.append(button)
             self.tag_buttons[-1].clicked.connect(self.update_status_bar)
+            
+            
             
     def add_tag_clicked(self):
         self.create_enter_string_dialog('Enter tag: ', 'Add tag')

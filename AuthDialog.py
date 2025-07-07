@@ -63,10 +63,10 @@ class AuthDialog(QDialog):
                 font-weight: 500;
             }}
             QLineEdit:focus {{
-                border-color: #8b5cf6;
+                border-color: {self.parent().color_profile.gradient_end_color.name()};
                 background: white;
                 outline: none;
-                color: #4c1d95;
+                color: {self.parent().color_profile.gradient_end_color.darker(115).name()};
             }}
             QLineEdit::placeholder {{
                 color: #9ca3af;
@@ -74,7 +74,7 @@ class AuthDialog(QDialog):
             }}
             QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 border: none;
                 border-radius: 15px;
                 color: white;
@@ -85,18 +85,18 @@ class AuthDialog(QDialog):
             }}
             QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(120).name()});
                 transform: translateY(-2px);
                 color: white;
             }}
             QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 transform: translateY(0px);
                 color: white;
             }}
             QLabel {{
-                color: #4c1d95;
+                color: {self.parent().color_profile.gradient_end_color.darker(110).name()};
                 font-weight: 600;
                 font-size: 14px;
                 margin-bottom: 5px;
@@ -149,7 +149,7 @@ class AuthDialog(QDialog):
         
         # Email field
         email_label = QLabel("Email Address")
-        email_label.setStyleSheet("color: #4c1d95; font-weight: 600;")
+        email_label.setStyleSheet(f"color: {self.parent().color_profile.gradient_end_color.darker(110).name()}; font-weight: 600;")
         signin_layout.addWidget(email_label)
         self.signin_email = QLineEdit()
         self.signin_email.setPlaceholderText("Enter your email address")
@@ -157,7 +157,7 @@ class AuthDialog(QDialog):
         
         # Password field
         password_label = QLabel("Password")
-        password_label.setStyleSheet("color: #4c1d95; font-weight: 600;")
+        password_label.setStyleSheet(f"color: {self.parent().color_profile.gradient_end_color.darker(110).name()}; font-weight: 600;")
         signin_layout.addWidget(password_label)
         self.signin_password = QLineEdit()
         self.signin_password.setPlaceholderText("Enter your password")
@@ -166,16 +166,16 @@ class AuthDialog(QDialog):
         
         # Sign in button
         signin_btn = QPushButton("Sign In")
-        signin_btn.setStyleSheet("""
+        signin_btn.setStyleSheet(f"""
             QPushButton {{
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 margin-top: 10px;
                 color: white;
             }}
             QPushButton:hover {{
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(115).name()});
                 color: white;
             }}
         """)
@@ -192,7 +192,7 @@ class AuthDialog(QDialog):
         
         # Name field
         name_label = QLabel("Full Name")
-        name_label.setStyleSheet("color: #4c1d95; font-weight: 600;")
+        name_label.setStyleSheet(f"color: {self.parent().color_profile.gradient_end_color.darker(110).name()}; font-weight: 600;")
         signup_layout.addWidget(name_label)
         self.signup_name = QLineEdit()
         self.signup_name.setPlaceholderText("Enter your full name")
@@ -200,7 +200,7 @@ class AuthDialog(QDialog):
         
         # Email field
         email_label2 = QLabel("Email Address")
-        email_label2.setStyleSheet("color: #4c1d95; font-weight: 600;")
+        email_label2.setStyleSheet(f"color: {self.parent().color_profile.gradient_end_color.darker(110).name()}; font-weight: 600;")
         signup_layout.addWidget(email_label2)
         self.signup_email = QLineEdit()
         self.signup_email.setPlaceholderText("Enter your email address")
@@ -208,7 +208,7 @@ class AuthDialog(QDialog):
         
         # Password field
         password_label2 = QLabel("Password")
-        password_label2.setStyleSheet("color: #4c1d95; font-weight: 600;")
+        password_label2.setStyleSheet(f"color: {self.parent().color_profile.gradient_end_color.darker(110).name()}; font-weight: 600;")
         signup_layout.addWidget(password_label2)
         self.signup_password = QLineEdit()
         self.signup_password.setPlaceholderText("Create a secure password")
@@ -217,16 +217,16 @@ class AuthDialog(QDialog):
         
         # Sign up button
         signup_btn = QPushButton("Create Account")
-        signup_btn.setStyleSheet("""
+        signup_btn.setStyleSheet(f"""
             QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #c084fc, stop: 1 #a855f7);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(125).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(125).name()});
                 margin-top: 10px;
                 color: white;
             }}
             QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #ddd6fe, stop: 1 #c084fc);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(1).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 color: white;
             }}
         """)
