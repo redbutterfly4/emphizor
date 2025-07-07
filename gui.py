@@ -8,12 +8,14 @@ from ViewCardsDialog import ViewCardsDialog
 from PracticeDialog import PracticeDialog
 from base_classes import FullCard, App
 from fsrs import Card
+from ColorProfile import ColorProfile
 
 class MainWindow(QMainWindow):
     tags: set
     tag_buttons: list[QPushButton]
     tag_len_limit = 50
     enter_string_dialog: EnterStringDialog
+    color_profile: ColorProfile
     
     def __init__(self):
         super().__init__()
@@ -21,6 +23,7 @@ class MainWindow(QMainWindow):
         self.tag_buttons = []  # Initialize empty list of buttons
         self.app = None
         self.user = None
+        self.color_profile = ColorProfile()
         
         # Show authentication dialog first
         if not self.authenticate_user():
@@ -62,21 +65,21 @@ class MainWindow(QMainWindow):
     def setup_modern_styling(self):
         """Apply modern styling to the application"""
         # Main window styling with purple theme like practice UI
-        self.setStyleSheet("""
-            QMainWindow {
+        self.setStyleSheet(f"""
+            QMainWindow {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+                    stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
                 color: white;
-            }
+            }}
 
             
-            QLabel {
+            QLabel {{
                 color: white;
                 font-weight: 600;
                 font-size: 14px;
-            }
+            }}
             
-            QPushButton {
+            QPushButton {{
                 background: rgba(255, 255, 255, 0.95);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 15px;
@@ -85,30 +88,30 @@ class MainWindow(QMainWindow):
                 font-size: 14px;
                 color: #4c1d95;
                 min-height: 20px;
-            }
+            }}
             
-            QPushButton:hover {
+            QPushButton:hover {{
                 background: white;
                 border-color: rgba(102, 126, 234, 0.5);
                 color: #5a67d8;
                 transform: translateY(-2px);
-            }
+            }}
             
-            QPushButton:pressed {
+            QPushButton:pressed {{
                 background: rgba(240, 240, 240, 0.9);
                 border-color: #5a67d8;
                 color: #4c1d95;
                 transform: translateY(0px);
-            }
+            }}
             
-            QPushButton:checked {
+            QPushButton:checked {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #8b5cf6, stop: 1 #7c3aed);
                 border-color: #6d28d9;
                 color: white;
-            }
+            }}
             
-            QTextEdit {
+            QTextEdit {{
                 background: rgba(255, 255, 255, 0.98);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 15px;
@@ -117,15 +120,15 @@ class MainWindow(QMainWindow):
                 color: #4c1d95;
                 selection-background-color: #8b5cf6;
                 selection-color: white;
-            }
+            }}
             
-            QTextEdit:focus {
+            QTextEdit:focus {{
                 border-color: rgba(139, 92, 246, 0.8);
                 background: white;
                 color: #4c1d95;
-            }
+            }}
             
-            QMenuBar {
+            QMenuBar {{
                 background: rgba(255, 255, 255, 0.1);
                 border: none;
                 border-radius: 8px;
@@ -133,39 +136,39 @@ class MainWindow(QMainWindow):
                 font-weight: 600;
                 font-size: 14px;
                 padding: 5px;
-            }
+            }}
             
-            QMenuBar::item {
+            QMenuBar::item {{
                 padding: 8px 16px;
                 border-radius: 6px;
                 background: transparent;
                 color: white;
-            }
+            }}
             
-            QMenuBar::item:selected {
+            QMenuBar::item:selected {{
                 background: rgba(139, 92, 246, 0.3);
                 color: white;
-            }
+            }}
             
-            QMenu {
+            QMenu {{
                 background: rgba(255, 255, 255, 0.98);
                 border: 2px solid rgba(139, 92, 246, 0.3);
                 border-radius: 12px;
                 padding: 8px;
-            }
+            }}
             
-            QMenu::item {
+            QMenu::item {{
                 padding: 8px 16px;
                 border-radius: 6px;
                 color: #4c1d95;
-            }
+            }}
             
-            QMenu::item:selected {
+            QMenu::item:selected {{
                 background: rgba(139, 92, 246, 0.2);
                 color: #6d28d9;
-            }
+            }}
             
-            QStatusBar {
+            QStatusBar {{
                 background: rgba(255, 255, 255, 0.1);
                 border: none;
                 border-radius: 8px;
@@ -173,7 +176,7 @@ class MainWindow(QMainWindow):
                 font-weight: 600;
                 font-size: 13px;
                 padding: 5px;
-            }
+            }}
         """)
         
         # Style specific buttons with purple theme
