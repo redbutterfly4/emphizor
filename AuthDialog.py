@@ -173,42 +173,42 @@ class AuthDialog(QDialog):
         # Remember me checkbox and clear button layout
         remember_layout = QHBoxLayout()
         self.remember_signin = QCheckBox("Remember me")
-        self.remember_signin.setStyleSheet("""
-            QCheckBox {
-                color: #4c1d95;
+        self.remember_signin.setStyleSheet(f"""
+            QCheckBox {{
+                color: {self.parent().color_profile.gradient_end_color.darker(110).name()};
                 font-weight: 500;
                 margin-top: 10px;
-            }
-            QCheckBox::indicator {
+            }}
+            QCheckBox::indicator {{
                 width: 18px;
                 height: 18px;
-                border: 2px solid #8b5cf6;
+                border: 2px solid {self.parent().color_profile.gradient_end_color.darker(105).name()};
                 border-radius: 4px;
                 background: white;
-            }
-            QCheckBox::indicator:checked {
-                background: #8b5cf6;
-                border-color: #8b5cf6;
-            }
+            }}
+            QCheckBox::indicator:checked {{
+                background: {self.parent().color_profile.gradient_end_color.lighter(110).name()};
+                border-color: {self.parent().color_profile.gradient_end_color.lighter(110).name()};
+            }}
         """)
         remember_layout.addWidget(self.remember_signin)
         
         # Clear saved credentials button
         clear_btn = QPushButton("Clear Saved")
-        clear_btn.setStyleSheet("""
-            QPushButton {
+        clear_btn.setStyleSheet(f"""
+            QPushButton {{
                 background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(139, 92, 246, 0.3);
+                border: 1px solid  {self.parent().color_profile.gradient_end_color.darker(130).name()};
                 border-radius: 8px;
-                color: #8b5cf6;
+                color:  {self.parent().color_profile.gradient_end_color.darker(120).name()};
                 font-size: 12px;
                 padding: 5px 10px;
                 margin-top: 10px;
-            }
-            QPushButton:hover {
-                background: rgba(139, 92, 246, 0.1);
-                border-color: #8b5cf6;
-            }
+            }}
+            QPushButton:hover {{
+                background: {self.parent().color_profile.gradient_end_color.darker(150).name()};
+                border-color: {self.parent().color_profile.gradient_end_color.darker(110).name()};
+            }}
         """)
         clear_btn.clicked.connect(self.clear_saved_credentials)
         remember_layout.addWidget(clear_btn)
@@ -269,23 +269,23 @@ class AuthDialog(QDialog):
         
         # Remember me checkbox
         self.remember_signup = QCheckBox("Remember me")
-        self.remember_signup.setStyleSheet("""
-            QCheckBox {
-                color: #4c1d95;
+        self.remember_signup.setStyleSheet(f"""
+            QCheckBox {{
+                color: {self.parent().color_profile.gradient_end_color.darker(125).name()};;
                 font-weight: 500;
                 margin-top: 10px;
-            }
-            QCheckBox::indicator {
+            }}
+            QCheckBox::indicator {{
                 width: 18px;
                 height: 18px;
-                border: 2px solid #8b5cf6;
+                border: 2px solid {self.parent().color_profile.gradient_end_color.lighter(105).name()};;
                 border-radius: 4px;
                 background: white;
-            }
-            QCheckBox::indicator:checked {
-                background: #8b5cf6;
-                border-color: #8b5cf6;
-            }
+            }}
+            QCheckBox::indicator:checked {{
+                background: {self.parent().color_profile.gradient_end_color.darker(110).name()};;
+                border-color: {self.parent().color_profile.gradient_end_color.darker(110).name()};;
+            }}
         """)
         signup_layout.addWidget(self.remember_signup)
         
