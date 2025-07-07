@@ -52,13 +52,13 @@ class EnterStringDialog(QDialog):
             }}
             QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(120).name()});
                 transform: translateY(-2px);
                 color: white;
             }}
             QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 transform: translateY(0px);
                 color: white;
             }}
@@ -155,7 +155,7 @@ class EnterStringDialog(QDialog):
         add_btn.setStyleSheet(f"""
             QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 border: none;
                 border-radius: 12px;
                 color: white;
@@ -167,13 +167,13 @@ class EnterStringDialog(QDialog):
             }}
             QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(115).name()});
                 transform: translateY(-2px);
                 color: white;
             }}
             QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 transform: translateY(0px);
                 color: white;
             }}

@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
             }}
             
             QMenu::item:selected {{
-                background: rgba(139, 92, 246, 0.2);
+                background: {self.color_profile.main_color.darker(140).name()}
                 color: {self.color_profile.gradient_end_color.darker(110).name()};
             }}
             
@@ -279,7 +279,7 @@ class MainWindow(QMainWindow):
                 }}
                 QPushButton:hover {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #ddd6fe, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                        stop: 0 {self.color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(115).name()});
                     border-color: {self.color_profile.gradient_end_color.lighter(110).name()};
                     color: white;
                     transform: translateY(-3px);
