@@ -18,19 +18,19 @@ class AuthDialog(QDialog):
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
         # Apply modern styling with purple theme like practice UI
-        self.setStyleSheet("""
-            QDialog {
+        self.setStyleSheet(f"""
+            QDialog {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+                    stop: 0 {self.parent().color_profile.main_color.name()}, stop: 1 {self.parent().color_profile.gradient_end_color.name()});
                 color: white;
-            }
-            QTabWidget::pane {
+            }}
+            QTabWidget::pane {{
                 background: rgba(255, 255, 255, 0.95);
                 border: none;
                 border-radius: 20px;
                 padding: 20px;
-            }
-            QTabBar::tab {
+            }}
+            QTabBar::tab {{
                 background: rgba(255, 255, 255, 0.1);
                 border: 2px solid rgba(255, 255, 255, 0.2);
                 border-bottom: none;
@@ -41,38 +41,38 @@ class AuthDialog(QDialog):
                 font-size: 16px;
                 color: white;
                 min-width: 80px;
-            }
-            QTabBar::tab:hover {
-                background: rgba(139, 92, 246, 0.2);
-                border-color: rgba(139, 92, 246, 0.5);
+            }}
+            QTabBar::tab:hover {{
+                background: {self.parent().color_profile.gradient_end_color.darker(130).name()};
+                border-color: {self.parent().color_profile.gradient_end_color.darker(120).name()};
                 color: white;
-            }
-            QTabBar::tab:selected {
+            }}
+            QTabBar::tab:selected {{
                 background: rgba(255, 255, 255, 0.95);
-                border-color: rgba(139, 92, 246, 0.8);
-                color: #4c1d95;
-            }
+                border-color: {self.parent().color_profile.gradient_end_color.lighter(105).name()};
+                color: {self.parent().color_profile.gradient_end_color.darker(120).name()};
+            }}
             
-            QLineEdit {
+            QLineEdit {{
                 background: rgba(255, 255, 255, 0.98);
-                border: 2px solid rgba(139, 92, 246, 0.3);
+                border: 2px solid {self.parent().color_profile.gradient_end_color.darker(115).name()};
                 border-radius: 12px;
                 padding: 15px 20px;
                 font-size: 16px;
-                color: #4c1d95;
+                color: {self.parent().color_profile.gradient_end_color.darker(120).name()};
                 font-weight: 500;
-            }
-            QLineEdit:focus {
+            }}
+            QLineEdit:focus {{
                 border-color: #8b5cf6;
                 background: white;
                 outline: none;
                 color: #4c1d95;
-            }
-            QLineEdit::placeholder {
+            }}
+            QLineEdit::placeholder {{
                 color: #9ca3af;
                 font-style: italic;
-            }
-            QPushButton {
+            }}
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #8b5cf6, stop: 1 #7c3aed);
                 border: none;
@@ -82,25 +82,25 @@ class AuthDialog(QDialog):
                 font-size: 16px;
                 padding: 18px 30px;
                 min-height: 20px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #a78bfa, stop: 1 #8b5cf6);
                 transform: translateY(-2px);
                 color: white;
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #7c3aed, stop: 1 #6d28d9);
                 transform: translateY(0px);
                 color: white;
-            }
-            QLabel {
+            }}
+            QLabel {{
                 color: #4c1d95;
                 font-weight: 600;
                 font-size: 14px;
                 margin-bottom: 5px;
-            }
+            }}
         """)
         
         # Main layout with responsive spacing
@@ -111,34 +111,34 @@ class AuthDialog(QDialog):
         # Title and welcome message
         title_label = QLabel("Welcome to Emphizor")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
+        title_label.setStyleSheet(f"""
+            QLabel {{
                 color: white;
                 font-size: 28px;
                 font-weight: bold;
                 margin-bottom: 10px;
-            }
+            }}
         """)
         main_layout.addWidget(title_label)
         
         subtitle_label = QLabel("Your intelligent flashcard companion")
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        subtitle_label.setStyleSheet("""
-            QLabel {
+        subtitle_label.setStyleSheet(f"""
+            QLabel {{
                 color: rgba(255, 255, 255, 0.9);
                 font-size: 16px;
                 font-weight: 500;
                 margin-bottom: 20px;
-            }
+            }}
         """)
         main_layout.addWidget(subtitle_label)
         
         # Tab widget for Sign In / Sign Up
         tab_widget = QTabWidget()
-        tab_widget.setStyleSheet("""
-            QTabWidget::tab-bar {
+        tab_widget.setStyleSheet(f"""
+            QTabWidget::tab-bar {{
                 alignment: center;
-            }
+            }}
         """)
         
         # Sign In Tab
@@ -167,17 +167,17 @@ class AuthDialog(QDialog):
         # Sign in button
         signin_btn = QPushButton("Sign In")
         signin_btn.setStyleSheet("""
-            QPushButton {
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #8b5cf6, stop: 1 #7c3aed);
                 margin-top: 10px;
                 color: white;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #a78bfa, stop: 1 #8b5cf6);
                 color: white;
-            }
+            }}
         """)
         signin_btn.clicked.connect(self.sign_in)
         signin_layout.addWidget(signin_btn)
@@ -218,17 +218,17 @@ class AuthDialog(QDialog):
         # Sign up button
         signup_btn = QPushButton("Create Account")
         signup_btn.setStyleSheet("""
-            QPushButton {
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #c084fc, stop: 1 #a855f7);
                 margin-top: 10px;
                 color: white;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 #ddd6fe, stop: 1 #c084fc);
                 color: white;
-            }
+            }}
         """)
         signup_btn.clicked.connect(self.sign_up)
         signup_layout.addWidget(signup_btn)
@@ -240,18 +240,18 @@ class AuthDialog(QDialog):
         # Cancel button
         cancel_btn = QPushButton("Exit")
         cancel_btn.setStyleSheet("""
-            QPushButton {
+            QPushButton {{
                 background: rgba(255, 255, 255, 0.1);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 color: white;
                 padding: 12px 25px;
                 font-size: 14px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: rgba(255, 255, 255, 0.2);
                 border-color: rgba(255, 255, 255, 0.5);
                 color: white;
-            }
+            }}
         """)
         cancel_btn.clicked.connect(self.reject)
         main_layout.addWidget(cancel_btn)
