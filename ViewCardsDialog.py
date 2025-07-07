@@ -2,11 +2,14 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                               QPushButton, QScrollArea, QWidget, QFrame, QTextEdit)
 from PySide6.QtCore import Qt
 from base_classes import FullCard
+from ColorProfile import ColorProfile
 
 class ViewCardsDialog(QDialog):
     def __init__(self, user, parent=None):
         super().__init__(parent)
         self.user = user
+        # Get color profile from parent if available, otherwise create default
+        self.color_profile = getattr(parent, 'color_profile', ColorProfile())
         self.setup_ui()
         
     def setup_ui(self):
@@ -19,12 +22,11 @@ class ViewCardsDialog(QDialog):
         self.setStyleSheet(f"""
             QDialog {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 {self.parent().color_profile.main_color.name()}, stop: 1 {self.parent().color_profile.gradient_end_color.name()});
+                    stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
                 color: white;
             }}
             QScrollArea {{
                 border: none;
-                background: transparent;
                 border-radius: 15px;
             }}
             QScrollArea QWidget {{
