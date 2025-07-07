@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, QPushButton, QMessageBox
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread, Signal
 from datetime import datetime, timezone
+import requests
+import json
 from design import Ui_MainWindow
 from EnterStringDialog import EnterStringDialog
 from AuthDialog import AuthDialog
@@ -8,6 +10,63 @@ from ViewCardsDialog import ViewCardsDialog
 from PracticeDialog import PracticeDialog
 from base_classes import FullCard, App
 from fsrs import Card
+from config import Config
+
+class AnswerGenerationWorker(QThread):
+    """Worker thread for generating answers using OpenRouter API"""
+    answer_generated = Signal(str)
+    error_occurred = Signal(str)
+    
+    def __init__(self, question):
+        super().__init__()
+        self.question = question
+        
+    def run(self):
+        try:
+            # Validate config
+            Config.validate_config()
+            
+            # Prepare the API request
+            headers = {
+                "Authorization": f"Bearer {Config.OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+            }
+            
+            data = {
+                "model": Config.OPENROUTER_MODEL,
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are an expert tutor helping create flashcards. Given a question, provide a clear, concise, and accurate answer that would be perfect for a flashcard. Keep it focused and educational. Answer in the language of the question. Include only the answer, no other text or symbols. Use plain text without markdown formatting."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Create a flashcard answer for this question: {self.question}"
+                    }
+                ],
+                "max_tokens": 200,
+                "temperature": 0.7
+            }
+            
+            response = requests.post(
+                Config.OPENROUTER_BASE_URL,
+                headers=headers,
+                data=json.dumps(data),
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'choices' in result and len(result['choices']) > 0:
+                    answer = result['choices'][0]['message']['content'].strip()
+                    self.answer_generated.emit(answer)
+                else:
+                    self.error_occurred.emit("No answer generated from API")
+            else:
+                self.error_occurred.emit(f"API request failed: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            self.error_occurred.emit(f"Error generating answer: {str(e)}")
 
 class MainWindow(QMainWindow):
     tags: set
@@ -36,6 +95,10 @@ class MainWindow(QMainWindow):
         self.ui.practiceButton.clicked.connect(self.practice_clicked)  # connect "Practice button" with slot
         self.ui.actionSave.triggered.connect(self.save_clicked)  # connect "Save" action with slot
         
+        # Add AI generation functionality
+        self.answer_worker = None
+        self.setup_ai_generation()
+        
         # Update window title with user name
         if self.user:
             self.setWindowTitle(f"Emphizor - {self.user.name}")
@@ -44,6 +107,91 @@ class MainWindow(QMainWindow):
             self.load_existing_tags()
         
         self.connect_buttons_to_update_status_bar()
+    
+    def setup_ai_generation(self):
+        """Setup AI generation functionality for the answer field"""
+        # Add Generate Answer button
+        self.generate_btn = QPushButton("Generate Answer")
+        self.generate_btn.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 #667eea, stop: 1 #764ba2);
+                border: 2px solid #5a67d8;
+                border-radius: 15px;
+                color: white;
+                font-weight: bold;
+                font-size: 16px;
+                padding: 15px 25px;
+                min-height: 25px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 #7c3aed, stop: 1 #667eea);
+                border-color: #667eea;
+                color: white;
+                transform: translateY(-3px);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 #5a67d8, stop: 1 #6b46c1);
+                color: white;
+                transform: translateY(0px);
+            }
+            QPushButton:disabled {
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                color: rgba(255, 255, 255, 0.5);
+            }
+        """)
+        self.generate_btn.clicked.connect(self.generate_answer)
+        
+        # Add the button to the layout after the question field
+        self.ui.AddCartIntaerfaceLayout.insertWidget(1, self.generate_btn)
+        
+    def generate_answer(self):
+        """Generate answer using OpenRouter API"""
+        question = self.ui.CardDescriptionTextEdit.toPlainText().strip()
+        if not question:
+            QMessageBox.warning(self, "No Question", "Please enter a question first.")
+            return
+        
+        # If a worker is already running, don't start another one
+        if self.answer_worker and self.answer_worker.isRunning():
+            return
+        
+        # Clean up any previous worker
+        if self.answer_worker:
+            self.answer_worker.deleteLater()
+            self.answer_worker = None
+        
+        # Disable generate button during generation
+        self.generate_btn.setEnabled(False)
+        self.generate_btn.setText("Generating...")
+        
+        # Start the worker thread
+        self.answer_worker = AnswerGenerationWorker(question)
+        self.answer_worker.answer_generated.connect(self.on_answer_generated)
+        self.answer_worker.error_occurred.connect(self.on_error_occurred)
+        self.answer_worker.finished.connect(self.on_worker_finished)
+        self.answer_worker.start()
+        
+    def on_answer_generated(self, answer):
+        """Handle successful answer generation"""
+        self.ui.textEdit.setPlainText(answer)
+        self.generate_btn.setEnabled(True)
+        self.generate_btn.setText("Generate Answer")
+        
+    def on_error_occurred(self, error_message):
+        """Handle error during answer generation"""
+        QMessageBox.warning(self, "Error", f"Failed to generate answer: {error_message}")
+        self.generate_btn.setEnabled(True)
+        self.generate_btn.setText("Generate Answer")
+        
+    def on_worker_finished(self):
+        """Handle worker thread completion"""
+        if self.answer_worker:
+            self.answer_worker.deleteLater()
+            self.answer_worker = None
             
         # Make window responsive with better minimum sizes
         self.resize(1000, 700)
@@ -68,7 +216,10 @@ class MainWindow(QMainWindow):
                     stop: 0 #667eea, stop: 1 #764ba2);
                 color: white;
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e5cbd04617758fd94a1545817599fa60c787edf4
             
             QLabel {
                 color: white;
@@ -138,7 +289,6 @@ class MainWindow(QMainWindow):
             QMenuBar::item {
                 padding: 8px 16px;
                 border-radius: 6px;
-                background: transparent;
                 color: white;
             }
             
@@ -441,6 +591,11 @@ class MainWindow(QMainWindow):
             
     def closeEvent(self, event):
         """Handle application close event - auto-save before closing"""
+        # Clean up answer worker thread
+        if self.answer_worker and self.answer_worker.isRunning():
+            self.answer_worker.quit()
+            self.answer_worker.wait(3000)  # Wait up to 3 seconds for clean shutdown
+            
         if self.user and self.app:
             try:
                 self.app.save_user()

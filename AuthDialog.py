@@ -52,7 +52,6 @@ class AuthDialog(QDialog):
                 border-color: rgba(139, 92, 246, 0.8);
                 color: #4c1d95;
             }
-            
             QLineEdit {
                 background: rgba(255, 255, 255, 0.98);
                 border: 2px solid rgba(139, 92, 246, 0.3);
