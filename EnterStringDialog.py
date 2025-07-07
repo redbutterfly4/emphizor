@@ -17,30 +17,30 @@ class EnterStringDialog(QDialog):
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
         # Apply modern styling with purple theme like practice UI
-        self.setStyleSheet("""
-            QDialog {
+        self.setStyleSheet(f"""
+            QDialog {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+                    stop: 0 {self.parent().color_profile.main_color.name()}, stop: 1 {self.parent().color_profile.gradient_end_color.name()});
                 color: white;
-            }
-            QLineEdit {
+            }}
+            QLineEdit {{
                 background: rgba(255, 255, 255, 0.98);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 12px;
                 padding: 15px 20px;
                 font-size: 16px;
-                color: #4c1d95;
+                color: {self.parent().color_profile.gradient_end_color.darker(110).name()};
                 font-weight: 500;
-            }
-            QLineEdit:focus {
-                border-color: rgba(139, 92, 246, 0.8);
+            }}
+            QLineEdit:focus {{
+                border-color: {self.parent().color_profile.gradient_end_color.darker(115).name()};
                 background: white;
                 outline: none;
-                color: #4c1d95;
-            }
-            QPushButton {
+                color: {self.parent().color_profile.gradient_end_color.darker(110).name()};
+            }}
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                        stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 border: none;
                 border-radius: 12px;
                 color: white;
@@ -49,24 +49,24 @@ class EnterStringDialog(QDialog):
                 padding: 15px 25px;
                 min-height: 20px;
                 min-width: 80px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(120).name()});
                 transform: translateY(-2px);
                 color: white;
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 transform: translateY(0px);
                 color: white;
-            }
-            QLabel {
+            }}
+            QLabel {{
                 color: white;
                 font-weight: 600;
                 font-size: 16px;
-            }
+            }}
         """)
         
         # Main layout with responsive spacing
@@ -77,13 +77,13 @@ class EnterStringDialog(QDialog):
         # Title
         title_label = QLabel(title)
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
+        title_label.setStyleSheet(f"""
+            QLabel {{
                 color: white;
                 font-size: 22px;
                 font-weight: bold;
                 margin-bottom: 10px;
-            }
+            }}
         """)
         main_layout.addWidget(title_label)
         
@@ -93,13 +93,13 @@ class EnterStringDialog(QDialog):
         
         # Label
         self.label = QLabel(label_message)
-        self.label.setStyleSheet("""
-            QLabel {
+        self.label.setStyleSheet(f"""
+            QLabel {{
                 color: rgba(255, 255, 255, 0.9);
                 font-size: 16px;
                 font-weight: 500;
                 margin-bottom: 5px;
-            }
+            }}
         """)
         input_layout.addWidget(self.label)
         
@@ -112,13 +112,13 @@ class EnterStringDialog(QDialog):
         # Character counter
         self.char_counter = QLabel(f"0/{self.len_limit}")
         self.char_counter.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.char_counter.setStyleSheet("""
-            QLabel {
+        self.char_counter.setStyleSheet(f"""
+            QLabel {{
                 color: rgba(255, 255, 255, 0.7);
                 font-size: 12px;
                 font-style: italic;
                 margin-top: 3px;
-            }
+            }}
         """)
         input_layout.addWidget(self.char_counter)
         
@@ -133,29 +133,29 @@ class EnterStringDialog(QDialog):
         
         # Cancel button
         cancel_btn = QPushButton("Cancel")
-        cancel_btn.setStyleSheet("""
-            QPushButton {
+        cancel_btn.setStyleSheet(f"""
+            QPushButton {{
                 background: rgba(255, 255, 255, 0.1);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 color: white;
                 padding: 12px 20px;
                 font-size: 14px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: rgba(255, 255, 255, 0.2);
                 border-color: rgba(255, 255, 255, 0.5);
                 color: white;
-            }
+            }}
         """)
         cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(cancel_btn)
         
         # Add button
         add_btn = QPushButton("Add")
-        add_btn.setStyleSheet("""
-            QPushButton {
+        add_btn.setStyleSheet(f"""
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 border: none;
                 border-radius: 12px;
                 color: white;
@@ -164,19 +164,19 @@ class EnterStringDialog(QDialog):
                 padding: 15px 25px;
                 min-height: 20px;
                 min-width: 80px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(115).name()});
                 transform: translateY(-2px);
                 color: white;
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 transform: translateY(0px);
                 color: white;
-            }
+            }}
         """)
         add_btn.clicked.connect(self.accept_button_pressed)
         button_layout.addWidget(add_btn)
@@ -193,31 +193,31 @@ class EnterStringDialog(QDialog):
         
         # Change color based on character count
         if current_length >= self.len_limit:
-            self.char_counter.setStyleSheet("""
-                QLabel {
+            self.char_counter.setStyleSheet(f"""
+                QLabel {{
                     color: #dc2626;
                     font-size: 12px;
                     font-weight: 600;
                     margin-top: 3px;
-                }
+                }}
             """)
         elif current_length >= self.len_limit * 0.9:
-            self.char_counter.setStyleSheet("""
-                QLabel {
+            self.char_counter.setStyleSheet(f"""
+                QLabel {{
                     color: #fbbf24;
                     font-size: 12px;
                     font-weight: 600;
                     margin-top: 3px;
-                }
+                }}
             """)
         else:
-            self.char_counter.setStyleSheet("""
-                QLabel {
+            self.char_counter.setStyleSheet(f"""
+                QLabel {{
                     color: rgba(255, 255, 255, 0.7);
                     font-size: 12px;
                     font-style: italic;
                     margin-top: 3px;
-                }
+                }}
             """)
     
     def is_empty_string_entered(self):

@@ -2,11 +2,14 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                               QPushButton, QScrollArea, QWidget, QFrame, QTextEdit)
 from PySide6.QtCore import Qt
 from base_classes import FullCard
+from ColorProfile import ColorProfile
 
 class ViewCardsDialog(QDialog):
     def __init__(self, user, parent=None):
         super().__init__(parent)
         self.user = user
+        # Get color profile from parent if available, otherwise create default
+        self.color_profile = getattr(parent, 'color_profile', ColorProfile())
         self.setup_ui()
         
     def setup_ui(self):
@@ -16,38 +19,41 @@ class ViewCardsDialog(QDialog):
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
         # Apply modern styling with purple theme like practice UI
-        self.setStyleSheet("""
-            QDialog {
+        self.setStyleSheet(f"""
+            QDialog {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+                    stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
                 color: white;
-            }
-            QScrollArea {
+            }}
+            QScrollArea {{
                 border: none;
                 border-radius: 15px;
-            }
-            QScrollBar:vertical {
+            }}
+            QScrollArea QWidget {{
+                background: transparent;
+            }}
+            QScrollBar:vertical {{
                 background: rgba(255, 255, 255, 0.1);
                 width: 12px;
                 border-radius: 6px;
                 margin: 0px;
-            }
-            QScrollBar::handle:vertical {
-                background: rgba(139, 92, 246, 0.5);
+            }}
+            QScrollBar::handle:vertical {{
+                background: {self.parent().color_profile.gradient_end_color.darker(105)};
                 border-radius: 6px;
                 min-height: 20px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background: #8b5cf6;
-            }
+            }}
+            QScrollBar::handle:vertical:hover {{
+                background: {self.parent().color_profile.gradient_end_color.lighter(105)};
+            }}
             QScrollBar::add-line:vertical,
-            QScrollBar::sub-line:vertical {
+            QScrollBar::sub-line:vertical {{
                 border: none;
                 background: none;
-            }
-            QPushButton {
+            }}
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 border: none;
                 border-radius: 15px;
                 color: white;
@@ -55,19 +61,19 @@ class ViewCardsDialog(QDialog):
                 font-size: 16px;
                 padding: 15px 30px;
                 min-height: 20px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #a78bfa, stop: 1 #8b5cf6);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(120).name()});
                 transform: translateY(-2px);
                 color: white;
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #6d28d9);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.darker(110).name()});
                 transform: translateY(0px);
                 color: white;
-            }
+            }}
         """)
         
         # Main layout with responsive spacing
@@ -208,16 +214,16 @@ class ViewCardsDialog(QDialog):
         header_layout = QHBoxLayout()
         
         number_label = QLabel(f"Card #{card_number}")
-        number_label.setStyleSheet("""
-            QLabel {
+        number_label.setStyleSheet(f"""
+            QLabel {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                    stop: 0 {self.parent().color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(110).name()});
                 color: white;
                 font-weight: bold;
                 font-size: 12px;
                 padding: 6px 12px;
                 border-radius: 12px;
-            }
+            }}
         """)
         header_layout.addWidget(number_label)
         header_layout.addStretch()
@@ -226,70 +232,70 @@ class ViewCardsDialog(QDialog):
         
         # Question section
         question_label = QLabel("Question")
-        question_label.setStyleSheet("""
-            QLabel {
-                color: #8b5cf6;
+        question_label.setStyleSheet(f"""
+            QLabel {{
+                color: {self.parent().color_profile.gradient_end_color.darker(130).name()};
                 font-weight: bold;
                 font-size: 14px;
                 margin-bottom: 3px;
-            }
+            }}
         """)
         card_layout.addWidget(question_label)
         
         question_text = QLabel(full_card.question)
         question_text.setWordWrap(True)
-        question_text.setStyleSheet("""
-            QLabel {
-                background: rgba(139, 92, 246, 0.1);
-                border: 2px solid rgba(139, 92, 246, 0.2);
+        question_text.setStyleSheet(f"""
+            QLabel {{
+                background: #fff;
+                border: 2px solid {self.parent().color_profile.gradient_end_color.darker(115).name()};
                 border-radius: 12px;
                 padding: 12px;
                 font-size: 14px;
                 line-height: 1.4;
-                color: #4c1d95;
+                color: {self.parent().color_profile.gradient_end_color.darker(120).name()};
                 min-height: 30px;
-            }
+            }}
         """)
         card_layout.addWidget(question_text)
         
         # Answer section
         answer_label = QLabel("Answer")
-        answer_label.setStyleSheet("""
-            QLabel {
-                color: #a855f7;
+        answer_label.setStyleSheet(f"""
+            QLabel {{
+                color: {self.parent().color_profile.gradient_end_color.darker(105).name()};
                 font-weight: bold;
                 font-size: 14px;
                 margin-bottom: 3px;
-            }
+            }}
         """)
         card_layout.addWidget(answer_label)
         
         answer_text = QLabel(full_card.answer)
         answer_text.setWordWrap(True)
-        answer_text.setStyleSheet("""
-            QLabel {
-                background: rgba(168, 85, 247, 0.1);
-                border: 2px solid rgba(168, 85, 247, 0.2);
+        answer_text.setStyleSheet(f"""
+            QLabel {{
+                background: #fff;
+                border: 2px solid {self.parent().color_profile.gradient_end_color.darker(115).name()};
                 border-radius: 12px;
                 padding: 12px;
                 font-size: 14px;
                 line-height: 1.4;
-                color: #4c1d95;
+                color: {self.parent().color_profile.gradient_end_color.darker(120).name()};
                 min-height: 30px;
-            }
+            }}
         """)
         card_layout.addWidget(answer_text)
         
         # Tags section
         if full_card.tags:
             tags_label = QLabel("Tags")
-            tags_label.setStyleSheet("""
-                QLabel {
-                    color: #c084fc;
+            tags_label.setStyleSheet(f"""
+                QLabel {{
+                    color: {self.parent().color_profile.gradient_end_color.lighter(90).name()};
                     font-weight: bold;
                     font-size: 14px;
                     margin-bottom: 3px;
-                }
+                }}
             """)
             card_layout.addWidget(tags_label)
             
@@ -300,16 +306,16 @@ class ViewCardsDialog(QDialog):
             
             for tag in full_card.tags:
                 tag_label = QLabel(tag)
-                tag_label.setStyleSheet("""
-                    QLabel {
+                tag_label.setStyleSheet(f"""
+                    QLabel {{
                         background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                            stop: 0 #c084fc, stop: 1 #a855f7);
+                            stop: 0 {self.parent().color_profile.gradient_end_color.darker(120).name()}, stop: 1 {self.parent().color_profile.gradient_end_color.lighter(130).name()});
                         color: white;
                         padding: 4px 10px;
                         border-radius: 12px;
                         font-size: 11px;
                         font-weight: 600;
-                    }
+                    }}
                 """)
                 tags_layout.addWidget(tag_label)
             

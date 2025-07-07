@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, QPushButton, QMessageBox
+from PySide6.QtWidgets import QColorDialog, QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, QPushButton, QMessageBox
 from PySide6.QtCore import Qt, QThread, Signal
 from datetime import datetime, timezone
 import requests
@@ -10,6 +10,7 @@ from ViewCardsDialog import ViewCardsDialog
 from PracticeDialog import PracticeDialog
 from base_classes import FullCard, App
 from fsrs import Card
+from ColorProfile import ColorProfile
 from config import Config
 
 class AnswerGenerationWorker(QThread):
@@ -73,13 +74,16 @@ class MainWindow(QMainWindow):
     tag_buttons: list[QPushButton]
     tag_len_limit = 50
     enter_string_dialog: EnterStringDialog
-    
+    color_profile: ColorProfile
+    first_color_dialog: QColorDialog
+    second_color_dialog: QColorDialog
     def __init__(self):
         super().__init__()
         self.tags = set()  # Initialize the tags attribute as an empty set
         self.tag_buttons = []  # Initialize empty list of buttons
         self.app = None
         self.user = None
+        self.color_profile = ColorProfile()
         
         # Show authentication dialog first
         if not self.authenticate_user():
@@ -94,11 +98,12 @@ class MainWindow(QMainWindow):
         self.ui.viewCardsButton.clicked.connect(self.view_cards_clicked)  # connect "View Cards button" with slot
         self.ui.practiceButton.clicked.connect(self.practice_clicked)  # connect "Practice button" with slot
         self.ui.actionSave.triggered.connect(self.save_clicked)  # connect "Save" action with slot
+        self.ui.actionfirst_color.triggered.connect(self.first_color_action_clicked)
+        self.ui.actionsecond_color.triggered.connect(self.second_color_action_clicked)
         
         # Add AI generation functionality
         self.answer_worker = None
         self.setup_ai_generation()
-        
         # Update window title with user name
         if self.user:
             self.setWindowTitle(f"Emphizor - {self.user.name}")
@@ -146,7 +151,7 @@ class MainWindow(QMainWindow):
         self.generate_btn.clicked.connect(self.generate_answer)
         
         # Add the button to the layout after the question field
-        self.ui.AddCartIntaerfaceLayout.insertWidget(1, self.generate_btn)
+        self.ui.AddCardInterfaceLayout.insertWidget(1, self.generate_btn)
         
     def generate_answer(self):
         """Generate answer using OpenRouter API"""
@@ -210,73 +215,69 @@ class MainWindow(QMainWindow):
     def setup_modern_styling(self):
         """Apply modern styling to the application"""
         # Main window styling with purple theme like practice UI
-        self.setStyleSheet("""
-            QMainWindow {
+        self.setStyleSheet(f"""
+            QMainWindow {{ 
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
+                    stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
                 color: white;
-            }
-<<<<<<< HEAD
-
-=======
->>>>>>> e5cbd04617758fd94a1545817599fa60c787edf4
+            }}
             
-            QLabel {
+            QLabel {{
                 color: white;
                 font-weight: 600;
                 font-size: 14px;
-            }
+            }}
             
-            QPushButton {
+            QPushButton {{
                 background: rgba(255, 255, 255, 0.95);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 15px;
                 padding: 12px 20px;
                 font-weight: 700;
                 font-size: 14px;
-                color: #4c1d95;
+                color: {self.color_profile.gradient_end_color.darker(140).name()};
                 min-height: 20px;
-            }
+            }}
             
-            QPushButton:hover {
+            QPushButton:hover {{
                 background: white;
-                border-color: rgba(102, 126, 234, 0.5);
-                color: #5a67d8;
+                border-color: {self.color_profile.gradient_end_color.darker(140).name()};
+                color: ;
                 transform: translateY(-2px);
-            }
+            }}
             
-            QPushButton:pressed {
+            QPushButton:pressed {{
                 background: rgba(240, 240, 240, 0.9);
-                border-color: #5a67d8;
-                color: #4c1d95;
+                border-color: {self.color_profile.main_color.lighter(120).name()};
+                color: {self.color_profile.main_color.darker(140).name()};
                 transform: translateY(0px);
-            }
+            }}
             
-            QPushButton:checked {
+            QPushButton:checked {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #8b5cf6, stop: 1 #7c3aed);
-                border-color: #6d28d9;
+                    stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                border-color: {self.color_profile.gradient_end_color.darker(110).name()};
                 color: white;
-            }
+            }}
             
-            QTextEdit {
+            QTextEdit {{
                 background: rgba(255, 255, 255, 0.98);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 15px;
                 padding: 15px;
                 font-size: 16px;
-                color: #4c1d95;
-                selection-background-color: #8b5cf6;
+                color: {self.color_profile.main_color.darker(140).name()};
+                selection-background-color: {self.color_profile.gradient_end_color.darker(130).name()};
                 selection-color: white;
-            }
+            }}
             
-            QTextEdit:focus {
-                border-color: rgba(139, 92, 246, 0.8);
+            QTextEdit:focus {{
+                border-color: {self.color_profile.gradient_end_color.darker(105).name()};
                 background: white;
-                color: #4c1d95;
-            }
+                color: {self.color_profile.main_color.darker(140).name()};
+            }}
             
-            QMenuBar {
+            QMenuBar {{
                 background: rgba(255, 255, 255, 0.1);
                 border: none;
                 border-radius: 8px;
@@ -284,38 +285,38 @@ class MainWindow(QMainWindow):
                 font-weight: 600;
                 font-size: 14px;
                 padding: 5px;
-            }
+            }}
             
-            QMenuBar::item {
+            QMenuBar::item {{
                 padding: 8px 16px;
                 border-radius: 6px;
                 color: white;
-            }
+            }}
             
-            QMenuBar::item:selected {
-                background: rgba(139, 92, 246, 0.3);
+            QMenuBar::item:selected {{
+                background: {self.color_profile.gradient_end_color.darker(130).name()};
                 color: white;
-            }
+            }}
             
-            QMenu {
+            QMenu {{
                 background: rgba(255, 255, 255, 0.98);
-                border: 2px solid rgba(139, 92, 246, 0.3);
+                border: 2px solid {self.color_profile.gradient_end_color.darker(130).name()};
                 border-radius: 12px;
                 padding: 8px;
-            }
+            }}
             
-            QMenu::item {
+            QMenu::item {{
                 padding: 8px 16px;
                 border-radius: 6px;
-                color: #4c1d95;
-            }
+                color: {self.color_profile.main_color.darker(140).name()};
+            }}
             
-            QMenu::item:selected {
-                background: rgba(139, 92, 246, 0.2);
-                color: #6d28d9;
-            }
+            QMenu::item:selected {{
+                background: {self.color_profile.main_color.darker(140).name()}
+                color: {self.color_profile.gradient_end_color.darker(110).name()};
+            }}
             
-            QStatusBar {
+            QStatusBar {{
                 background: rgba(255, 255, 255, 0.1);
                 border: none;
                 border-radius: 8px;
@@ -323,120 +324,120 @@ class MainWindow(QMainWindow):
                 font-weight: 600;
                 font-size: 13px;
                 padding: 5px;
-            }
+            }}
         """)
         
         # Style specific buttons with purple theme
         if hasattr(self.ui, 'addCartButton'):
-            self.ui.addCartButton.setStyleSheet("""
-                QPushButton {
+            self.ui.addCartButton.setStyleSheet(f"""
+                QPushButton {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #8b5cf6, stop: 1 #7c3aed);
-                    border: 2px solid #6d28d9;
+                        stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                    border: 2px solid {self.color_profile.gradient_end_color.darker(110).name()};
                     border-radius: 15px;
                     color: white;
                     font-weight: bold;
                     font-size: 16px;
                     padding: 15px 25px;
                     min-height: 25px;
-                }
-                QPushButton:hover {
+                }}
+                QPushButton:hover {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #a78bfa, stop: 1 #8b5cf6);
-                    border-color: #8b5cf6;
+                        stop: 0 {self.color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(120).name()});
+                    border-color: {self.color_profile.gradient_end_color.darker(130).name()};
                     color: white;
                     transform: translateY(-3px);
-                }
-                QPushButton:pressed {
+                }}
+                QPushButton:pressed {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #7c3aed, stop: 1 #6d28d9);
+                        stop: 0 {self.color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(110).name()});
                     color: white;
                     transform: translateY(0px);
-                }
+                }}
             """)
         
         if hasattr(self.ui, 'viewCardsButton'):
-            self.ui.viewCardsButton.setStyleSheet("""
-                QPushButton {
+            self.ui.viewCardsButton.setStyleSheet(f"""
+                QPushButton {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #c084fc, stop: 1 #a855f7);
-                    border: 2px solid #9333ea;
+                        stop: 0 {self.color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(105).name()});
+                    border: 2px solid {self.color_profile.gradient_end_color.name()};
                     border-radius: 15px;
                     color: white;
                     font-weight: bold;
                     font-size: 16px;
                     padding: 15px 25px;
                     min-height: 25px;
-                }
-                QPushButton:hover {
+                }}
+                QPushButton:hover {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #ddd6fe, stop: 1 #c084fc);
-                    border-color: #c084fc;
+                        stop: 0 {self.color_profile.gradient_end_color.lighter(120).name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
+                    border-color: {self.color_profile.gradient_end_color.lighter(110).name()};
                     color: white;
                     transform: translateY(-3px);
-                }
-                QPushButton:pressed {
+                }}
+                QPushButton:pressed {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #a855f7, stop: 1 #9333ea);
+                        stop: 0 {self.color_profile.gradient_end_color.darker(105).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(105).name()});
                     color: white;
                     transform: translateY(0px);
-                }
+                }}
             """)
         
         if hasattr(self.ui, 'practiceButton'):
-            self.ui.practiceButton.setStyleSheet("""
-                QPushButton {
+            self.ui.practiceButton.setStyleSheet(f"""
+                QPushButton {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #8b5cf6, stop: 1 #7c3aed);
-                    border: 2px solid #6d28d9;
+                        stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                    border: 2px solid {self.color_profile.gradient_end_color.darker(110).name()};
                     border-radius: 15px;
                     color: white;
                     font-weight: bold;
                     font-size: 16px;
                     padding: 15px 25px;
                     min-height: 25px;
-                }
-                QPushButton:hover {
+                }}
+                QPushButton:hover {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #a78bfa, stop: 1 #8b5cf6);
-                    border-color: #8b5cf6;
+                        stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(130).name()});
+                    border-color: {self.color_profile.gradient_end_color.darker(130).name()};
                     color: white;
                     transform: translateY(-3px);
-                }
-                QPushButton:pressed {
+                }}
+                QPushButton:pressed {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #7c3aed, stop: 1 #6d28d9);
+                        stop: 0 {self.color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(110).name()});
                     color: white;
                     transform: translateY(0px);
-                }
+                }}
             """)
         
         if hasattr(self.ui, 'pushButton'):
-            self.ui.pushButton.setStyleSheet("""
-                QPushButton {
+            self.ui.pushButton.setStyleSheet(f"""
+                QPushButton {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #c084fc, stop: 1 #a855f7);
-                    border: 2px solid #9333ea;
+                        stop: 0 {self.color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(105).name()});
+                    border: 2px solid {self.color_profile.gradient_end_color.lighter(110).name()};
                     border-radius: 15px;
                     color: white;
                     font-weight: bold;
                     font-size: 16px;
                     padding: 15px 25px;
                     min-height: 25px;
-                }
-                QPushButton:hover {
+                }}
+                QPushButton:hover {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #ddd6fe, stop: 1 #c084fc);
-                    border-color: #c084fc;
+                        stop: 0 {self.color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(115).name()});
+                    border-color: {self.color_profile.gradient_end_color.lighter(110).name()};
                     color: white;
                     transform: translateY(-3px);
-                }
-                QPushButton:pressed {
+                }}
+                QPushButton:pressed {{
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #a855f7, stop: 1 #9333ea);
+                        stop: 0 {self.color_profile.gradient_end_color.darker(105).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(110).name()});
                     color: white;
                     transform: translateY(0px);
-                }
+                }}
             """)
         
     def load_existing_tags(self):
@@ -456,8 +457,8 @@ class MainWindow(QMainWindow):
                 button = QPushButton(self)
                 button.setText(tag)
                 button.setCheckable(True)
-                button.setStyleSheet("""
-                    QPushButton {
+                button.setStyleSheet(f"""
+                    QPushButton {{
                         background: rgba(255, 255, 255, 0.9);
                         border: 2px solid rgba(255, 255, 255, 0.3);
                         border-radius: 12px;
@@ -465,20 +466,20 @@ class MainWindow(QMainWindow):
                         margin: 3px;
                         font-weight: 600;
                         font-size: 13px;
-                        color: #4c1d95;
+                        color: {self.color_profile.main_color.darker(140).name()};
                         min-width: 60px;
-                    }
-                    QPushButton:hover {
+                    }}
+                    QPushButton:hover {{
                         background: white;
-                        border-color: rgba(139, 92, 246, 0.5);
-                        color: #6d28d9;
-                    }
-                    QPushButton:checked {
+                        border-color: {self.color_profile.gradient_end_color.darker(115).name()};
+                        color: {self.color_profile.gradient_end_color.darker(110).name()};
+                    }}
+                    QPushButton:checked {{
                         background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                            stop: 0 #8b5cf6, stop: 1 #7c3aed);
-                        border-color: #6d28d9;
+                            stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                        border-color: {self.color_profile.gradient_end_color.darker(110).name()};
                         color: white;
-                    }
+                    }}
                 """)
                 self.ui.verticalLayout.addWidget(button)
                 self.tag_buttons.append(button)
@@ -515,6 +516,31 @@ class MainWindow(QMainWindow):
         self.enter_string_dialog = EnterStringDialog(label_message, title, self, self.tag_len_limit)
         self.enter_string_dialog.accepted.connect(self.add_tag_button)
         
+    def tag_button_set_styling(self, button):
+        button.setStyleSheet(f"""
+                    QPushButton {{
+                        background: rgba(255, 255, 255, 0.9);
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 12px;
+                        padding: 8px 12px;
+                        margin: 3px;
+                        font-weight: 600;
+                        font-size: 13px;
+                        color: {self.color_profile.main_color.darker(140).name()};
+                        min-width: 60px;
+                    }}
+                    QPushButton:hover {{
+                        background: white;
+                        border-color: {self.color_profile.gradient_end_color.darker(115).name()};
+                        color: {self.color_profile.gradient_end_color.darker(110).name()};
+                    }}
+                    QPushButton:checked {{
+                        background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                            stop: 0 {self.color_profile.gradient_end_color.darker(130).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                        border-color: {self.color_profile.gradient_end_color.darker(110).name()};
+                        color: white;
+                    }}
+                                 """)
     def add_tag_button(self):
         tag_text = self.enter_string_dialog.line_edit.text()
         if tag_text not in self.tags:
@@ -522,30 +548,7 @@ class MainWindow(QMainWindow):
             button = QPushButton(self)
             button.setText(tag_text)
             button.setCheckable(True)  # Make tags selectable
-            button.setStyleSheet("""
-                QPushButton {
-                    background: rgba(255, 255, 255, 0.9);
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 12px;
-                    padding: 8px 12px;
-                    margin: 3px;
-                    font-weight: 600;
-                    font-size: 13px;
-                    color: #4c1d95;
-                    min-width: 60px;
-                }
-                QPushButton:hover {
-                    background: white;
-                    border-color: rgba(139, 92, 246, 0.5);
-                    color: #6d28d9;
-                }
-                QPushButton:checked {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #8b5cf6, stop: 1 #7c3aed)
-                    border-color: #6d28d9;
-                    color: white;
-                }
-            """)
+            self.tag_button_set_styling(button)
             self.ui.verticalLayout.addWidget(button)
             self.tag_buttons.append(button)
             self.tag_buttons[-1].clicked.connect(self.update_status_bar)
@@ -661,6 +664,28 @@ class MainWindow(QMainWindow):
     def connect_buttons_to_update_status_bar(self):
         for i in range(len(self.tag_buttons)):
             self.tag_buttons[i].clicked.connect(self.update_status_bar)
+
+    def first_color_selected(self):
+        self.color_profile.gradient_end_color = self.first_color_dialog.selectedColor()
+        self.setup_modern_styling()
+        for btn in self.tag_buttons:
+            self.tag_button_set_styling(btn)
+
+    def first_color_action_clicked(self):
+        self.first_color_dialog = QColorDialog(self)
+        self.first_color_dialog.colorSelected.connect(self.first_color_selected)
+        self.first_color_dialog.show()
+    
+    def second_color_selected(self):
+        self.color_profile.main_color = self.second_color_dialog.selectedColor()
+        self.setup_modern_styling()
+        for btn in self.tag_buttons:
+            self.tag_button_set_styling(btn)
+
+    def second_color_action_clicked(self):
+        self.second_color_dialog = QColorDialog(self)
+        self.second_color_dialog.colorSelected.connect(self.second_color_selected)
+        self.second_color_dialog.show()
 def main():
     app = QApplication()
     window = MainWindow()
