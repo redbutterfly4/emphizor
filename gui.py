@@ -69,14 +69,14 @@ class AnswerGenerationWorker(QThread):
             self.error_occurred.emit(f"Error generating answer: {str(e)}")
 
 class MainWindow(QMainWindow):
-    tags: list[str]
+    tags: set
     tag_buttons: list[QPushButton]
     tag_len_limit = 50
     enter_string_dialog: EnterStringDialog
     
     def __init__(self):
         super().__init__()
-        self.tags = []  # Initialize the tags attribute as an empty list
+        self.tags = set()  # Initialize the tags attribute as an empty set
         self.tag_buttons = []  # Initialize empty list of buttons
         self.app = None
         self.user = None
@@ -105,6 +105,8 @@ class MainWindow(QMainWindow):
             self.update_status_bar()
             # Load existing tags from user's cards
             self.load_existing_tags()
+        
+        self.connect_buttons_to_update_status_bar()
     
     def setup_ai_generation(self):
         """Setup AI generation functionality for the answer field"""
@@ -194,6 +196,7 @@ class MainWindow(QMainWindow):
         # Make window responsive with better minimum sizes
         self.resize(1000, 700)
         self.setMinimumSize(600, 400)  # Smaller minimum for better small screen support
+
         
     def authenticate_user(self):
         """Show authentication dialog and return True if successful"""
@@ -213,6 +216,10 @@ class MainWindow(QMainWindow):
                     stop: 0 #667eea, stop: 1 #764ba2);
                 color: white;
             }
+<<<<<<< HEAD
+
+=======
+>>>>>>> e5cbd04617758fd94a1545817599fa60c787edf4
             
             QLabel {
                 color: white;
@@ -445,7 +452,7 @@ class MainWindow(QMainWindow):
         # Add tag buttons for each unique tag
         for tag in sorted(all_tags):
             if tag not in self.tags:
-                self.tags.append(tag)
+                self.tags.add(tag)
                 button = QPushButton(self)
                 button.setText(tag)
                 button.setCheckable(True)
@@ -483,9 +490,12 @@ class MainWindow(QMainWindow):
             
         now = datetime.now(timezone.utc)
         due_count = 0
-        
+        selected_tags = set()
+        for btn in self.tag_buttons:
+            if btn.isChecked():
+                selected_tags.add(btn.text())
         for full_card in self.user.full_cards:
-            if full_card.card.due <= now:
+            if full_card.card.due <= now and full_card.tags <= selected_tags:
                 due_count += 1
                 
         return due_count
@@ -499,7 +509,7 @@ class MainWindow(QMainWindow):
         due_cards = self.count_due_cards()
         
         status_text = f"Welcome, {self.user.name} ✨ | {total_cards} cards total | {due_cards} due for review"
-        self.statusBar().showMessage(status_text, 10000)
+        self.statusBar().showMessage(status_text)
         
     def create_enter_string_dialog(self, label_message, title):
         self.enter_string_dialog = EnterStringDialog(label_message, title, self, self.tag_len_limit)
@@ -508,7 +518,7 @@ class MainWindow(QMainWindow):
     def add_tag_button(self):
         tag_text = self.enter_string_dialog.line_edit.text()
         if tag_text not in self.tags:
-            self.tags.append(tag_text)
+            self.tags.add(tag_text)
             button = QPushButton(self)
             button.setText(tag_text)
             button.setCheckable(True)  # Make tags selectable
@@ -531,13 +541,14 @@ class MainWindow(QMainWindow):
                 }
                 QPushButton:checked {
                     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 #8b5cf6, stop: 1 #7c3aed);
+                        stop: 0 #8b5cf6, stop: 1 #7c3aed)
                     border-color: #6d28d9;
                     color: white;
                 }
             """)
             self.ui.verticalLayout.addWidget(button)
             self.tag_buttons.append(button)
+            self.tag_buttons[-1].clicked.connect(self.update_status_bar)
             
     def add_tag_clicked(self):
         self.create_enter_string_dialog('Enter tag: ', 'Add tag')
@@ -558,7 +569,8 @@ class MainWindow(QMainWindow):
             return
             
         practice_dialog = PracticeDialog(self.user, self.app, self)
-        practice_dialog.exec()
+        if practice_dialog.cant_practice is False:
+            practice_dialog.exec()
         
         # Update status bar after practice session
         self.update_status_bar()
@@ -616,10 +628,10 @@ class MainWindow(QMainWindow):
                 return
                 
             # Get selected tags
-            selected_tags = []
+            selected_tags = set()
             for button in self.tag_buttons:
                 if button.isChecked():
-                    selected_tags.append(button.text())
+                    selected_tags.add(button.text())
                     
             # Create new card
             card = Card()
@@ -646,6 +658,9 @@ class MainWindow(QMainWindow):
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to add card: {str(e)}")
 
+    def connect_buttons_to_update_status_bar(self):
+        for i in range(len(self.tag_buttons)):
+            self.tag_buttons[i].clicked.connect(self.update_status_bar)
 def main():
     app = QApplication()
     window = MainWindow()

@@ -1,19 +1,22 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
                               QLineEdit, QPushButton, QTabWidget, QWidget, 
-                              QMessageBox, QApplication)
+                              QMessageBox, QApplication, QCheckBox)
 from PySide6.QtCore import Qt
 from base_classes import App
+from local_storage import LocalCredentialStorage
 
 class AuthDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.app = App()
         self.user = None
+        self.credential_storage = LocalCredentialStorage()
         self.setup_ui()
+        self.load_saved_credentials()
         
     def setup_ui(self):
         self.setWindowTitle("Welcome to Emphizor")
-        self.resize(600, 500)
+        self.resize(800, 800)
         self.setMinimumSize(400, 300)  # Better minimum for small screens
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
@@ -163,6 +166,52 @@ class AuthDialog(QDialog):
         self.signin_password.setEchoMode(QLineEdit.EchoMode.Password)
         signin_layout.addWidget(self.signin_password)
         
+        # Remember me checkbox and clear button layout
+        remember_layout = QHBoxLayout()
+        self.remember_signin = QCheckBox("Remember me")
+        self.remember_signin.setStyleSheet("""
+            QCheckBox {
+                color: #4c1d95;
+                font-weight: 500;
+                margin-top: 10px;
+            }
+            QCheckBox::indicator {
+                width: 18px;
+                height: 18px;
+                border: 2px solid #8b5cf6;
+                border-radius: 4px;
+                background: white;
+            }
+            QCheckBox::indicator:checked {
+                background: #8b5cf6;
+                border-color: #8b5cf6;
+            }
+        """)
+        remember_layout.addWidget(self.remember_signin)
+        
+        # Clear saved credentials button
+        clear_btn = QPushButton("Clear Saved")
+        clear_btn.setStyleSheet("""
+            QPushButton {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                border-radius: 8px;
+                color: #8b5cf6;
+                font-size: 12px;
+                padding: 5px 10px;
+                margin-top: 10px;
+            }
+            QPushButton:hover {
+                background: rgba(139, 92, 246, 0.1);
+                border-color: #8b5cf6;
+            }
+        """)
+        clear_btn.clicked.connect(self.clear_saved_credentials)
+        remember_layout.addWidget(clear_btn)
+        remember_layout.addStretch()  # Push the button to the left
+        
+        signin_layout.addLayout(remember_layout)
+        
         # Sign in button
         signin_btn = QPushButton("Sign In")
         signin_btn.setStyleSheet("""
@@ -213,6 +262,28 @@ class AuthDialog(QDialog):
         self.signup_password.setPlaceholderText("Create a secure password")
         self.signup_password.setEchoMode(QLineEdit.EchoMode.Password)
         signup_layout.addWidget(self.signup_password)
+        
+        # Remember me checkbox
+        self.remember_signup = QCheckBox("Remember me")
+        self.remember_signup.setStyleSheet("""
+            QCheckBox {
+                color: #4c1d95;
+                font-weight: 500;
+                margin-top: 10px;
+            }
+            QCheckBox::indicator {
+                width: 18px;
+                height: 18px;
+                border: 2px solid #8b5cf6;
+                border-radius: 4px;
+                background: white;
+            }
+            QCheckBox::indicator:checked {
+                background: #8b5cf6;
+                border-color: #8b5cf6;
+            }
+        """)
+        signup_layout.addWidget(self.remember_signup)
         
         # Sign up button
         signup_btn = QPushButton("Create Account")
@@ -267,6 +338,13 @@ class AuthDialog(QDialog):
             self.app.login_or_signup(email, password)
             if self.app.user:
                 self.user = self.app.user
+                
+                # Save credentials if "Remember me" is checked
+                if self.remember_signin.isChecked():
+                    success = self.credential_storage.save_credentials(email, password)
+                    if not success:
+                        QMessageBox.warning(self, "Warning", "Failed to save credentials locally.")
+                
                 QMessageBox.information(self, "Welcome Back! 🎉", f"Successfully signed in as {self.user.name}")
                 self.accept()
             else:
@@ -287,12 +365,41 @@ class AuthDialog(QDialog):
             self.app.login_or_signup(email, password, name)
             if self.app.user:
                 self.user = self.app.user
+                
+                # Save credentials if "Remember me" is checked
+                if self.remember_signup.isChecked():
+                    success = self.credential_storage.save_credentials(email, password)
+                    if not success:
+                        QMessageBox.warning(self, "Warning", "Failed to save credentials locally.")
+                
                 QMessageBox.information(self, "Account Created! 🎉", f"Welcome to Emphizor, {self.user.name}!")
                 self.accept()
             else:
                 QMessageBox.warning(self, "Sign Up Failed", "Account creation failed. Please try again.")
         except Exception as e:
             QMessageBox.warning(self, "Sign Up Error", f"Sign up failed: {str(e)}")
+    
+    def load_saved_credentials(self):
+        """Load saved credentials and populate the sign-in form"""
+        try:
+            email, password = self.credential_storage.load_credentials()
+            if email and password:
+                self.signin_email.setText(email)
+                self.signin_password.setText(password)
+                self.remember_signin.setChecked(True)
+        except Exception as e:
+            print(f"Error loading saved credentials: {e}")
+    
+    def clear_saved_credentials(self):
+        """Clear saved credentials"""
+        try:
+            self.credential_storage.clear_credentials()
+            self.signin_email.clear()
+            self.signin_password.clear()
+            self.remember_signin.setChecked(False)
+            QMessageBox.information(self, "Cleared", "Saved credentials have been cleared.")
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"Failed to clear credentials: {str(e)}")
             
     def get_app(self):
         return self.app

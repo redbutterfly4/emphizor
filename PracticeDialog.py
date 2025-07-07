@@ -15,6 +15,7 @@ class PracticeDialog(QDialog):
         self.due_cards = []
         self.review_logs = []
         self.cards_reviewed = 0
+        self.cant_practice = False
         self.setup_ui()
         self.load_due_cards()
         
@@ -301,15 +302,20 @@ class PracticeDialog(QDialog):
             return
             
         now = datetime.now(timezone.utc)
+        selected_tags = set()
+        for button in self.parent().tag_buttons:
+            if button.isChecked():
+                selected_tags.add(button.text())
         self.due_cards = []
         
         for full_card in self.user.full_cards:
-            if full_card.card.due <= now:
+            if full_card.card.due <= now and full_card.tags <= selected_tags:
                 self.due_cards.append(full_card)
         
         if not self.due_cards:
             QMessageBox.information(self, "No Due Cards", "No cards are due for review right now. Great job staying on top of your studies!")
             self.close()
+            self.cant_practice = True
             return
             
         self.current_card_index = 0
