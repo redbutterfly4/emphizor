@@ -16,160 +16,144 @@
   <property name="documentMode">
    <bool>false</bool>
   </property>
-    <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="mainHorizontalLayout">
     <item>
-     <widget class="QWidget" name="sidebarWidget">
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>200</width>
-        <height>0</height>
-       </size>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Add tag </string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Plain</enum>
-         </property>
-         <property name="text">
-          <string>Your tags:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Add tag </string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+        <property name="default">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="frameShape">
+         <enum>QFrame::Shape::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Plain</enum>
+        </property>
+        <property name="text">
+         <string>Your tags:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QWidget" name="contentWidget">
-      <layout class="QVBoxLayout" name="AddCardInterfaceLayout">
-       <item>
-        <layout class="QHBoxLayout" name="CardDescripitionLayout">
-         <item>
-          <widget class="QLabel" name="CardDescriptionLabel">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>150</width>
-             <height>70</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Enter card description:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="CardDescriptionTextEdit"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="CardAnswerLayout">
-         <item>
-          <widget class="QLabel" name="CardAnswerLabel">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>150</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Enter card answer:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="textEdit"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="buttonsLayout">
-         <item>
-          <widget class="QPushButton" name="addCartButton">
-           <property name="text">
-            <string>Add card</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="viewCardsButton">
-           <property name="text">
-            <string>View Cards</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="practiceButton">
-           <property name="text">
-            <string>Practice</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="contentVerticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QVBoxLayout" name="AddCardInterfaceLayout">
+      <item>
+       <layout class="QHBoxLayout" name="CardDescripitionLayout">
+        <item>
+         <widget class="QLabel" name="CardDescriptionLabel">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Enter card description:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="CardDescriptionTextEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="CardAnswerLayout">
+        <item>
+         <widget class="QLabel" name="CardAnswerLabel">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Enter card answer:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="buttonsLayout">
+        <item>
+         <widget class="QPushButton" name="addCartButton">
+          <property name="text">
+           <string>Add card</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="viewCardsButton">
+          <property name="text">
+           <string>View Cards</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="practiceButton">
+          <property name="text">
+           <string>Practice</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="contentVerticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -188,7 +172,15 @@
     </property>
     <addaction name="actionSave"/>
    </widget>
+   <widget class="QMenu" name="menuColor">
+    <property name="title">
+     <string>Color</string>
+    </property>
+    <addaction name="actionfirst_color"/>
+    <addaction name="actionsecond_color"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuColor"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionSave">
@@ -197,6 +189,16 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionfirst_color">
+   <property name="text">
+    <string>first color</string>
+   </property>
+  </action>
+  <action name="actionsecond_color">
+   <property name="text">
+    <string>second color</string>
    </property>
   </action>
  </widget>

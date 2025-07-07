@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, QPushButton, QMessageBox
+from PySide6.QtWidgets import QColorDialog, QApplication, QMainWindow, QDialog, QLineEdit, QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, QPushButton, QMessageBox
 from PySide6.QtCore import Qt
 from datetime import datetime, timezone
 from design import Ui_MainWindow
@@ -16,7 +16,8 @@ class MainWindow(QMainWindow):
     tag_len_limit = 50
     enter_string_dialog: EnterStringDialog
     color_profile: ColorProfile
-    
+    first_color_dialog: QColorDialog
+    second_color_dialog: QColorDialog
     def __init__(self):
         super().__init__()
         self.tags = set()  # Initialize the tags attribute as an empty set
@@ -38,7 +39,8 @@ class MainWindow(QMainWindow):
         self.ui.viewCardsButton.clicked.connect(self.view_cards_clicked)  # connect "View Cards button" with slot
         self.ui.practiceButton.clicked.connect(self.practice_clicked)  # connect "Practice button" with slot
         self.ui.actionSave.triggered.connect(self.save_clicked)  # connect "Save" action with slot
-        
+        self.ui.actionfirst_color.triggered.connect(self.first_color_action_clicked)
+        self.ui.actionsecond_color.triggered.connect(self.second_color_action_clicked)
         # Update window title with user name
         if self.user:
             self.setWindowTitle(f"Emphizor - {self.user.name}")
@@ -367,15 +369,8 @@ class MainWindow(QMainWindow):
     def create_enter_string_dialog(self, label_message, title):
         self.enter_string_dialog = EnterStringDialog(label_message, title, self, self.tag_len_limit)
         self.enter_string_dialog.accepted.connect(self.add_tag_button)
-        
-    def add_tag_button(self):
-        tag_text = self.enter_string_dialog.line_edit.text()
-        if tag_text not in self.tags:
-            self.tags.add(tag_text)
-            button = QPushButton(self)
-            button.setText(tag_text)
-            button.setCheckable(True)  # Make tags selectable
-            button.setStyleSheet(f"""
+    def tag_button_set_styling(self, button):
+        button.setStyleSheet(f"""
                     QPushButton {{
                         background: rgba(255, 255, 255, 0.9);
                         border: 2px solid rgba(255, 255, 255, 0.3);
@@ -399,6 +394,14 @@ class MainWindow(QMainWindow):
                         color: white;
                     }}
                 """)
+    def add_tag_button(self):
+        tag_text = self.enter_string_dialog.line_edit.text()
+        if tag_text not in self.tags:
+            self.tags.add(tag_text)
+            button = QPushButton(self)
+            button.setText(tag_text)
+            button.setCheckable(True)  # Make tags selectable
+            self.tag_button_set_styling(button)
             self.ui.verticalLayout.addWidget(button)
             self.tag_buttons.append(button)
             self.tag_buttons[-1].clicked.connect(self.update_status_bar)
@@ -511,6 +514,30 @@ class MainWindow(QMainWindow):
     def connect_buttons_to_update_status_bar(self):
         for i in range(len(self.tag_buttons)):
             self.tag_buttons[i].clicked.connect(self.update_status_bar)
+
+    def first_color_selected(self):
+        self.color_profile.gradient_end_color = self.first_color_dialog.selectedColor()
+        self.setup_modern_styling()
+        for btn in self.tag_buttons:
+            self.tag_button_set_styling(btn)
+
+
+    def first_color_action_clicked(self):
+        self.first_color_dialog = QColorDialog(self)
+        self.first_color_dialog.colorSelected.connect(self.first_color_selected)
+        self.first_color_dialog.show()
+    
+    def second_color_selected(self):
+        self.color_profile.main_color = self.second_color_dialog.selectedColor()
+        self.setup_modern_styling()
+        for btn in self.tag_buttons:
+            self.tag_button_set_styling(btn)
+
+    def second_color_action_clicked(self):
+        self.second_color_dialog = QColorDialog(self)
+        self.second_color_dialog.colorSelected.connect(self.second_color_selected)
+        self.second_color_dialog.show()
+        
 def main():
     app = QApplication()
     window = MainWindow()
