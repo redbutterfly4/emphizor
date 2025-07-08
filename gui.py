@@ -716,7 +716,7 @@ class MainWindow(QMainWindow):
                 self.tag_buttons.remove(button)
         for card in self.user.full_cards:
             card.tags = card.tags - to_delete_names
-        
+        self.tags -= to_delete_names
     
 def main():
     app = QApplication()
