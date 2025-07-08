@@ -34,6 +34,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="delete_tag_button">
+        <property name="text">
+         <string>Delete tag</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label">
         <property name="frameShape">
          <enum>QFrame::Shape::NoFrame</enum>

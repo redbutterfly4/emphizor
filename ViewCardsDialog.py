@@ -5,6 +5,13 @@ from base_classes import FullCard
 from ColorProfile import ColorProfile
 
 class ViewCardsDialog(QDialog):
+    main_layout : QVBoxLayout
+    header_layout : QVBoxLayout
+    cards_container : QWidget
+    cards_layout : QVBoxLayout
+    scroll_area : QScrollArea
+
+    
     def __init__(self, user, parent=None):
         super().__init__(parent)
         self.user = user
@@ -77,12 +84,12 @@ class ViewCardsDialog(QDialog):
         """)
         
         # Main layout with responsive spacing
-        main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(20, 20, 20, 20)  # Smaller margins for small screens
-        main_layout.setSpacing(15)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)  # Smaller margins for small screens
+        self.main_layout.setSpacing(15)
         
         # Header section
-        header_layout = QVBoxLayout()
+        self.header_layout = QVBoxLayout()
         
         # Title
         title_label = QLabel("Your Flashcard Collection")
@@ -95,7 +102,7 @@ class ViewCardsDialog(QDialog):
                 margin-bottom: 5px;
             }
         """)
-        header_layout.addWidget(title_label)
+        self.header_layout.addWidget(title_label)
         
         # Subtitle with count
         subtitle_label = QLabel(f"{self.user.name}'s Library • {len(self.user.full_cards)} cards")
@@ -108,26 +115,26 @@ class ViewCardsDialog(QDialog):
                 margin-bottom: 15px;
             }
         """)
-        header_layout.addWidget(subtitle_label)
+        self.header_layout.addWidget(subtitle_label)
         
-        main_layout.addLayout(header_layout)
+        self.main_layout.addLayout(self.header_layout)
         
         # Scroll area for cards
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         
         # Container widget for cards
-        cards_container = QWidget()
-        cards_layout = QVBoxLayout(cards_container)
-        cards_layout.setSpacing(10)  # Smaller spacing for mobile
-        cards_layout.setContentsMargins(5, 5, 5, 5)
+        self.cards_container = QWidget()
+        self.cards_layout = QVBoxLayout(self.cards_container)
+        self.cards_layout.setSpacing(10)  # Smaller spacing for mobile
+        self.cards_layout.setContentsMargins(5, 5, 5, 5)
         
         # Add each card as a widget
         if self.user.full_cards:
             for i, full_card in enumerate(self.user.full_cards):
                 card_widget = self.create_card_widget(full_card, i + 1)
-                cards_layout.addWidget(card_widget)
+                self.cards_layout.addWidget(card_widget)
         else:
             # No cards message
             no_cards_widget = QFrame()
@@ -166,13 +173,13 @@ class ViewCardsDialog(QDialog):
             """)
             no_cards_layout.addWidget(no_cards_hint)
             
-            cards_layout.addWidget(no_cards_widget)
+            self.cards_layout.addWidget(no_cards_widget)
         
         # Add stretch to push cards to top
-        cards_layout.addStretch()
+        self.cards_layout.addStretch()
         
-        scroll_area.setWidget(cards_container)
-        main_layout.addWidget(scroll_area)
+        self.scroll_area.setWidget(self.cards_container)
+        self.main_layout.addWidget(self.scroll_area)
         
         # Close button
         close_btn = QPushButton("Close")
@@ -191,8 +198,60 @@ class ViewCardsDialog(QDialog):
             }
         """)
         close_btn.clicked.connect(self.accept)
-        main_layout.addWidget(close_btn)
-        
+        self.main_layout.addWidget(close_btn)
+    
+    
+    def delete_card(self, card_to_delete):
+        self.user.full_cards.remove(card_to_delete)
+        while self.cards_layout.count():
+            item = self.cards_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        if self.user.full_cards:
+            for i, full_card in enumerate(self.user.full_cards):
+                card_widget = self.create_card_widget(full_card, i + 1)
+                self.cards_layout.addWidget(card_widget)
+        else:
+            no_cards_widget = QFrame()
+            no_cards_widget.setStyleSheet("""
+                QFrame {
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 2px dashed rgba(255, 255, 255, 0.3);
+                    border-radius: 20px;
+                    padding: 30px;
+                    margin: 15px;
+                }
+            """)
+            no_cards_layout = QVBoxLayout(no_cards_widget)
+            no_cards_icon = QLabel("📚")
+            no_cards_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            no_cards_icon.setStyleSheet("font-size: 48px; margin-bottom: 10px;")
+            no_cards_layout.addWidget(no_cards_icon)
+            no_cards_label = QLabel("No cards found")
+            no_cards_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            no_cards_label.setStyleSheet("""
+                color: white;
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 5px;
+            """)
+            no_cards_layout.addWidget(no_cards_label)
+            no_cards_hint = QLabel("Create some flashcards to get started!")
+            no_cards_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            no_cards_hint.setStyleSheet("""
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+                font-style: italic;
+            """)
+            no_cards_layout.addWidget(no_cards_hint)
+            self.cards_layout.addWidget(no_cards_widget)
+        self.cards_layout.addStretch()
+        subtitle_labels = [self.header_layout.itemAt(i).widget() for i in range(self.header_layout.count())]
+        for label in subtitle_labels:
+            if isinstance(label, QLabel) and f"{self.user.name}'s Library" in label.text():
+                label.setText(f"{self.user.name}'s Library • {len(self.user.full_cards)} cards")
+                break
+            
     def create_card_widget(self, full_card: FullCard, card_number: int):
         """Create a widget for displaying a single card"""
         card_frame = QFrame()
@@ -227,6 +286,10 @@ class ViewCardsDialog(QDialog):
         """)
         header_layout.addWidget(number_label)
         header_layout.addStretch()
+        delete_card_button = QPushButton(self)
+        delete_card_button.setText('Delete card')
+        header_layout.addWidget(delete_card_button)
+        delete_card_button.clicked.connect(lambda: self.delete_card(full_card))
         
         card_layout.addLayout(header_layout)
         
