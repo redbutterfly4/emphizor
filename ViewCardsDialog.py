@@ -192,7 +192,8 @@ class ViewCardsDialog(QDialog):
         """)
         close_btn.clicked.connect(self.accept)
         main_layout.addWidget(close_btn)
-        
+    def delete_card(self, card):
+        self.user.full
     def create_card_widget(self, full_card: FullCard, card_number: int):
         """Create a widget for displaying a single card"""
         card_frame = QFrame()
@@ -230,6 +231,7 @@ class ViewCardsDialog(QDialog):
         delete_card_button = QPushButton(self)
         delete_card_button.setText('Delete card')
         header_layout.addWidget(delete_card_button)
+        delete_card_button.clicked.connect(lambda card: self.delete_card(card))
         
         card_layout.addLayout(header_layout)
         
