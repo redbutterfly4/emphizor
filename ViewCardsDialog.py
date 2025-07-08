@@ -227,6 +227,9 @@ class ViewCardsDialog(QDialog):
         """)
         header_layout.addWidget(number_label)
         header_layout.addStretch()
+        delete_card_button = QPushButton(self)
+        delete_card_button.setText('Delete card')
+        header_layout.addWidget(delete_card_button)
         
         card_layout.addLayout(header_layout)
         
