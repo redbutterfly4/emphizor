@@ -112,41 +112,72 @@ class MainWindow(QMainWindow):
             self.load_existing_tags()
         
         self.connect_buttons_to_update_status_bar()
-    
-    def setup_ai_generation(self):
-        """Setup AI generation functionality for the answer field"""
-        # Add Generate Answer button
-        self.generate_btn = QPushButton("Generate Answer")
-        self.generate_btn.setStyleSheet("""
-            QPushButton {
+    def set_generate_button_styling(self):
+        self.generate_btn.setStyleSheet(f"""
+            QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #667eea, stop: 1 #764ba2);
-                border: 2px solid #5a67d8;
+                    stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
+                border: 2px solid {self.color_profile.gradient_end_color.darker(105).name()};
                 border-radius: 15px;
                 color: white;
                 font-weight: bold;
                 font-size: 16px;
                 padding: 15px 25px;
                 min-height: 25px;
-            }
-            QPushButton:hover {
+            }}
+            QPushButton:hover {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #7c3aed, stop: 1 #667eea);
-                border-color: #667eea;
+                    stop: 0 {self.color_profile.gradient_end_color.name()}, stop: 1 {self.color_profile.main_color.name()});
+                border-color: {self.color_profile.main_color.name()};
                 color: white;
                 transform: translateY(-3px);
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #5a67d8, stop: 1 #6b46c1);
+                    stop: 0 {self.color_profile.main_color.darker(105).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
                 color: white;
                 transform: translateY(0px);
-            }
-            QPushButton:disabled {
+            }}
+            QPushButton:disabled {{
                 background: rgba(255, 255, 255, 0.1);
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 color: rgba(255, 255, 255, 0.5);
-            }
+            }}
+        """)
+    def setup_ai_generation(self):
+        """Setup AI generation functionality for the answer field"""
+        # Add Generate Answer button
+        self.generate_btn = QPushButton("Generate Answer")
+        self.generate_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
+                border: 2px solid {self.color_profile.gradient_end_color.darker(105).name()};
+                border-radius: 15px;
+                color: white;
+                font-weight: bold;
+                font-size: 16px;
+                padding: 15px 25px;
+                min-height: 25px;
+            }}
+            QPushButton:hover {{
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.color_profile.gradient_end_color.name()}, stop: 1 {self.color_profile.main_color.name()});
+                border-color: {self.color_profile.main_color.name()};
+                color: white;
+                transform: translateY(-3px);
+            }}
+            QPushButton:pressed {{
+                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                    stop: 0 {self.color_profile.main_color.darker(105).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(110).name()});
+                color: white;
+                transform: translateY(0px);
+            }}
+            QPushButton:disabled {{
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                color: rgba(255, 255, 255, 0.5);
+            }}
         """)
         self.generate_btn.clicked.connect(self.generate_answer)
         
@@ -670,6 +701,7 @@ class MainWindow(QMainWindow):
         self.setup_modern_styling()
         for btn in self.tag_buttons:
             self.tag_button_set_styling(btn)
+        self.set_generate_button_styling()
 
     def first_color_action_clicked(self):
         self.first_color_dialog = QColorDialog(self)
@@ -681,7 +713,7 @@ class MainWindow(QMainWindow):
         self.setup_modern_styling()
         for btn in self.tag_buttons:
             self.tag_button_set_styling(btn)
-
+        self.set_generate_button_styling()
     def second_color_action_clicked(self):
         self.second_color_dialog = QColorDialog(self)
         self.second_color_dialog.colorSelected.connect(self.second_color_selected)
