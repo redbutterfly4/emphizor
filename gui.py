@@ -101,6 +101,7 @@ class MainWindow(QMainWindow):
         self.ui.actionfirst_color.triggered.connect(self.first_color_action_clicked)
         self.ui.actionsecond_color.triggered.connect(self.second_color_action_clicked)
         
+        
         # Add AI generation functionality
         self.answer_worker = None
         self.setup_ai_generation()
@@ -443,33 +444,6 @@ class MainWindow(QMainWindow):
                 }}
             """)
         
-        if hasattr(self.ui, 'pushButton'):
-            self.ui.pushButton.setStyleSheet(f"""
-                QPushButton {{
-                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 {self.color_profile.gradient_end_color.lighter(110).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(105).name()});
-                    border: 2px solid {self.color_profile.gradient_end_color.lighter(110).name()};
-                    border-radius: 15px;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 16px;
-                    padding: 15px 25px;
-                    min-height: 25px;
-                }}
-                QPushButton:hover {{
-                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 {self.color_profile.gradient_end_color.darker(110).name()}, stop: 1 {self.color_profile.gradient_end_color.lighter(115).name()});
-                    border-color: {self.color_profile.gradient_end_color.lighter(110).name()};
-                    color: white;
-                    transform: translateY(-3px);
-                }}
-                QPushButton:pressed {{
-                    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                        stop: 0 {self.color_profile.gradient_end_color.darker(105).name()}, stop: 1 {self.color_profile.gradient_end_color.darker(110).name()});
-                    color: white;
-                    transform: translateY(0px);
-                }}
-            """)
         
     def load_existing_tags(self):
         """Load and display existing tags from user's cards"""

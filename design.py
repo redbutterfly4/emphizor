@@ -45,6 +45,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.pushButton)
 
+        self.delete_tag_button = QPushButton(self.centralwidget)
+        self.delete_tag_button.setObjectName(u"delete_tag_button")
+
+        self.verticalLayout.addWidget(self.delete_tag_button)
+
         self.label = QLabel(self.centralwidget)
         self.label.setObjectName(u"label")
         self.label.setFrameShape(QFrame.Shape.NoFrame)
@@ -158,6 +163,7 @@ class Ui_MainWindow(object):
         self.actionfirst_color.setText(QCoreApplication.translate("MainWindow", u"first color", None))
         self.actionsecond_color.setText(QCoreApplication.translate("MainWindow", u"second color", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Add tag ", None))
+        self.delete_tag_button.setText(QCoreApplication.translate("MainWindow", u"Delete tag", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Your tags:", None))
         self.CardDescriptionLabel.setText(QCoreApplication.translate("MainWindow", u"Enter card description:", None))
         self.CardAnswerLabel.setText(QCoreApplication.translate("MainWindow", u"Enter card answer:", None))
