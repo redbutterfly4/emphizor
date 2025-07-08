@@ -45,7 +45,7 @@ class AnswerGenerationWorker(QThread):
                         "content": f"Create a flashcard answer for this question: {self.question}"
                     }
                 ],
-                "max_tokens": 200,
+                "max_tokens": 777,
                 "temperature": 0.7
             }
             
