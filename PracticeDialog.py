@@ -299,6 +299,7 @@ class PracticeDialog(QDialog):
         """Load cards that are due for review"""
         if not self.user.full_cards:
             QMessageBox.information(self, "No Cards", "You don't have any cards to practice. Create some cards first!")
+            self.cant_practice = True
             self.close()
             return
             
