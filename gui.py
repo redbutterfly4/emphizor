@@ -8,6 +8,7 @@ from EnterStringDialog import EnterStringDialog
 from AuthDialog import AuthDialog
 from ViewCardsDialog import ViewCardsDialog
 from PracticeDialog import PracticeDialog
+from ConceptConnectDialog import ConceptConnectDialog
 from base_classes import FullCard, App
 from fsrs import Card
 from ColorProfile import ColorProfile
@@ -101,6 +102,11 @@ class MainWindow(QMainWindow):
         self.ui.actionfirst_color.triggered.connect(self.first_color_action_clicked)
         self.ui.actionsecond_color.triggered.connect(self.second_color_action_clicked)
         self.ui.delete_tag_button.clicked.connect(self.delete_tag_button_clicked)
+
+        # Add Concept Connect game button
+        self.concept_connect_button = QPushButton("🎯 Concept Connect")
+        self.concept_connect_button.clicked.connect(self.concept_connect_clicked)
+        self.ui.buttonsLayout.addWidget(self.concept_connect_button)
         
         # Add AI generation functionality
         self.answer_worker = None
@@ -118,8 +124,8 @@ class MainWindow(QMainWindow):
             QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
                     stop: 0 {self.color_profile.main_color.name()}, stop: 1 {self.color_profile.gradient_end_color.name()});
-                border: 2px solid {self.color_profile.gradient_end_color.darker(105).name()};
-                border-radius: 15px;
+               
+                border-radius: 0px;
                 color: white;
                 font-weight: bold;
                 font-size: 16px;
@@ -589,6 +595,15 @@ class MainWindow(QMainWindow):
         
         # Update status bar after practice session
         self.update_status_bar()
+    
+    def concept_connect_clicked(self):
+        """Start a Concept Connect game session"""
+        if not self.user:
+            QMessageBox.warning(self, "Error", "User not authenticated.")
+            return
+            
+        concept_connect_dialog = ConceptConnectDialog(self.user, self)
+        concept_connect_dialog.exec()
         
     def save_clicked(self):
         """Manual save/sync functionality"""
@@ -716,8 +731,9 @@ class MainWindow(QMainWindow):
                 self.tag_buttons.remove(button)
         for card in self.user.full_cards:
             card.tags = card.tags - to_delete_names
+
         self.tags -= to_delete_names
-    
+
 def main():
     app = QApplication()
     window = MainWindow()
