@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         self.ui.actionfirst_color.triggered.connect(self.first_color_action_clicked)
         self.ui.actionsecond_color.triggered.connect(self.second_color_action_clicked)
         self.ui.delete_tag_button.clicked.connect(self.delete_tag_button_clicked)
-        
+
         # Add Concept Connect game button
         self.concept_connect_button = QPushButton("🎯 Concept Connect")
         self.concept_connect_button.clicked.connect(self.concept_connect_clicked)
@@ -731,8 +731,9 @@ class MainWindow(QMainWindow):
                 self.tag_buttons.remove(button)
         for card in self.user.full_cards:
             card.tags = card.tags - to_delete_names
-        
-    
+
+        self.tags -= to_delete_names
+
 def main():
     app = QApplication()
     window = MainWindow()
