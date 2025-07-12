@@ -5,17 +5,24 @@ from PySide6.QtCore import Qt
 from base_classes import App
 from local_storage import LocalCredentialStorage
 from ColorProfile import ColorProfile
+from logger_config import get_logger
+
+# Set up logger for this module
+logger = get_logger(__name__)
 
 class AuthDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        logger.info("Initializing AuthDialog")
         self.app = App()
         self.user = None
         self.credential_storage = LocalCredentialStorage()
         # Get color profile from parent if available, otherwise create default
         self.color_profile = getattr(parent, 'color_profile', ColorProfile())
+        logger.debug("AuthDialog base attributes initialized")
         self.setup_ui()
         self.load_saved_credentials()
+        logger.info("AuthDialog initialization complete")
         
     def setup_ui(self):
         self.setWindowTitle("Welcome to Emphizor")
@@ -331,68 +338,88 @@ class AuthDialog(QDialog):
         main_layout.addWidget(cancel_btn)
         
     def sign_in(self):
+        logger.info("Sign in button clicked")
         email = self.signin_email.text().strip()
         password = self.signin_password.text().strip()
         
         if not email or not password:
+            logger.warning("Sign in attempted with empty email or password")
             QMessageBox.warning(self, "Missing Information", "Please enter both email and password.")
             return
-            
+        
+        logger.info(f"Attempting sign in for email: {email}")
         try:
             self.app.login_or_signup(email, password)
             if self.app.user:
                 self.user = self.app.user
+                logger.info(f"Sign in successful for user: {email}")
                 
                 # Save credentials if "Remember me" is checked
                 if self.remember_signin.isChecked():
+                    logger.debug("Saving credentials (remember me checked)")
                     success = self.credential_storage.save_credentials(email, password)
                     if not success:
+                        logger.warning("Failed to save credentials locally")
                         QMessageBox.warning(self, "Warning", "Failed to save credentials locally.")
                 
                 QMessageBox.information(self, "Welcome Back! 🎉", f"Successfully signed in as {self.user.name}")
                 self.accept()
             else:
+                logger.error("Sign in failed - no user object returned")
                 QMessageBox.warning(self, "Sign In Failed", "Please check your credentials and try again.")
         except Exception as e:
+            logger.error(f"Sign in failed for {email}: {str(e)}", exc_info=True)
             QMessageBox.warning(self, "Sign In Error", f"Sign in failed: {str(e)}")
             
     def sign_up(self):
+        logger.info("Sign up button clicked")
         name = self.signup_name.text().strip()
         email = self.signup_email.text().strip()
         password = self.signup_password.text().strip()
         
         if not name or not email or not password:
+            logger.warning("Sign up attempted with missing information")
             QMessageBox.warning(self, "Missing Information", "Please fill in all fields.")
             return
-            
+        
+        logger.info(f"Attempting sign up for email: {email}, name: {name}")
         try:
             self.app.login_or_signup(email, password, name)
             if self.app.user:
                 self.user = self.app.user
+                logger.info(f"Sign up successful for user: {email}")
                 
                 # Save credentials if "Remember me" is checked
                 if self.remember_signup.isChecked():
+                    logger.debug("Saving credentials (remember me checked)")
                     success = self.credential_storage.save_credentials(email, password)
                     if not success:
+                        logger.warning("Failed to save credentials locally")
                         QMessageBox.warning(self, "Warning", "Failed to save credentials locally.")
                 
                 QMessageBox.information(self, "Account Created! 🎉", f"Welcome to Emphizor, {self.user.name}!")
                 self.accept()
             else:
+                logger.error("Sign up failed - no user object returned")
                 QMessageBox.warning(self, "Sign Up Failed", "Account creation failed. Please try again.")
         except Exception as e:
+            logger.error(f"Sign up failed for {email}: {str(e)}", exc_info=True)
             QMessageBox.warning(self, "Sign Up Error", f"Sign up failed: {str(e)}")
     
     def load_saved_credentials(self):
         """Load saved credentials and populate the sign-in form"""
+        logger.info("Loading saved credentials")
         try:
             email, password = self.credential_storage.load_credentials()
             if email and password:
+                logger.info(f"Loaded saved credentials for email: {email}")
                 self.signin_email.setText(email)
                 self.signin_password.setText(password)
                 self.remember_signin.setChecked(True)
+            else:
+                logger.debug("No saved credentials found")
         except Exception as e:
-            print(f"Error loading saved credentials: {e}")
+            logger.error(f"Error loading saved credentials: {e}", exc_info=True)
     
     def clear_saved_credentials(self):
         """Clear saved credentials"""

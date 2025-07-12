@@ -13,6 +13,10 @@ from base_classes import FullCard, App
 from fsrs import Card
 from ColorProfile import ColorProfile
 from config import Config
+from logger_config import get_logger
+
+# Set up logger for this module
+logger = get_logger(__name__)
 
 class AnswerGenerationWorker(QThread):
     """Worker thread for generating answers using OpenRouter API"""
@@ -22,11 +26,15 @@ class AnswerGenerationWorker(QThread):
     def __init__(self, question):
         super().__init__()
         self.question = question
+        logger.debug(f"AnswerGenerationWorker initialized with question: {question[:50]}...")
         
     def run(self):
+        logger.info("Starting AI answer generation process")
         try:
             # Validate config
+            logger.debug("Validating OpenRouter configuration")
             Config.validate_config()
+            logger.debug("OpenRouter configuration validated successfully")
             
             # Prepare the API request
             headers = {
@@ -50,6 +58,7 @@ class AnswerGenerationWorker(QThread):
                 "temperature": 0.7
             }
             
+            logger.info(f"Sending request to OpenRouter API with model: {Config.OPENROUTER_MODEL}")
             response = requests.post(
                 Config.OPENROUTER_BASE_URL,
                 headers=headers,
@@ -57,17 +66,23 @@ class AnswerGenerationWorker(QThread):
                 timeout=30
             )
             
+            logger.info(f"API response received with status code: {response.status_code}")
+            
             if response.status_code == 200:
                 result = response.json()
                 if 'choices' in result and len(result['choices']) > 0:
                     answer = result['choices'][0]['message']['content'].strip()
+                    logger.info(f"AI answer generated successfully (length: {len(answer)} characters)")
                     self.answer_generated.emit(answer)
                 else:
+                    logger.error("API response missing choices or empty response")
                     self.error_occurred.emit("No answer generated from API")
             else:
+                logger.error(f"API request failed: {response.status_code} - {response.text}")
                 self.error_occurred.emit(f"API request failed: {response.status_code} - {response.text}")
                 
         except Exception as e:
+            logger.error(f"Error in AI answer generation: {str(e)}", exc_info=True)
             self.error_occurred.emit(f"Error generating answer: {str(e)}")
 
 class MainWindow(QMainWindow):
@@ -80,14 +95,18 @@ class MainWindow(QMainWindow):
     second_color_dialog: QColorDialog
     def __init__(self):
         super().__init__()
+        logger.info("Initializing MainWindow")
         self.tags = set()  # Initialize the tags attribute as an empty set
         self.tag_buttons = []  # Initialize empty list of buttons
         self.app = None
         self.user = None
         self.color_profile = ColorProfile()
+        logger.debug("MainWindow base attributes initialized")
         
         # Show authentication dialog first
+        logger.info("Starting user authentication process")
         if not self.authenticate_user():
+            logger.warning("User authentication failed, closing application")
             self.close()
             return
             
@@ -243,11 +262,14 @@ class MainWindow(QMainWindow):
         
     def authenticate_user(self):
         """Show authentication dialog and return True if successful"""
+        logger.info("Showing authentication dialog")
         auth_dialog = AuthDialog(self)
         if auth_dialog.exec() == QDialog.DialogCode.Accepted:
             self.app = auth_dialog.get_app()
             self.user = auth_dialog.get_user()
+            logger.info(f"Authentication successful for user: {self.user.email if self.user else 'Unknown'}")
             return True
+        logger.warning("Authentication dialog cancelled or failed")
         return False
     
     def get_selected_tags(self):
@@ -576,24 +598,35 @@ class MainWindow(QMainWindow):
         self.enter_string_dialog.exec()
     def view_cards_clicked(self):
         """Show the view cards dialog"""
+        logger.info("View cards button clicked")
         if not self.user:
+            logger.warning("View cards attempted but user not authenticated")
             QMessageBox.warning(self, "Error", "User not authenticated.")
             return
             
+        logger.info(f"Opening view cards dialog for user: {self.user.email}")
         view_dialog = ViewCardsDialog(self.user, self)
         view_dialog.exec()
+        logger.info("View cards dialog closed")
         
     def practice_clicked(self):
         """Start a practice session"""
+        logger.info("Practice button clicked")
         if not self.user or not self.app:
+            logger.warning("Practice attempted but user not authenticated")
             QMessageBox.warning(self, "Error", "User not authenticated.")
             return
             
+        logger.info(f"Starting practice session for user: {self.user.email}")
         practice_dialog = PracticeDialog(self.user, self.app, self)
         if practice_dialog.cant_practice is False:
+            logger.info("Practice dialog opened successfully")
             practice_dialog.exec()
+        else:
+            logger.warning("Practice session could not be started (no due cards)")
         
         # Update status bar after practice session
+        logger.debug("Updating status bar after practice session")
         self.update_status_bar()
     
     def concept_connect_clicked(self):
@@ -607,15 +640,20 @@ class MainWindow(QMainWindow):
         
     def save_clicked(self):
         """Manual save/sync functionality"""
+        logger.info("Manual save button clicked")
         if not self.user or not self.app:
+            logger.warning("Save attempted but user not authenticated")
             QMessageBox.warning(self, "Error", "User not authenticated.")
             return
             
         try:
+            logger.info("Starting manual save operation")
             self.statusBar().showMessage("Saving... 💾", 2000)
             self.app.save_user()
+            logger.info("Manual save completed successfully")
             self.statusBar().showMessage("Data saved successfully! ✅", 3000)
         except Exception as e:
+            logger.error(f"Manual save failed: {str(e)}", exc_info=True)
             self.statusBar().showMessage("Save failed! ❌", 3000)
             QMessageBox.warning(self, "Error", f"Failed to save: {str(e)}")
             
@@ -644,7 +682,9 @@ class MainWindow(QMainWindow):
         
     def add_card_clicked(self):
         """Add a new flashcard"""
+        logger.info("Add card button clicked")
         if not self.user or not self.app:
+            logger.warning("Add card attempted but user not authenticated")
             QMessageBox.warning(self, "Error", "User not authenticated.")
             return
             
@@ -652,8 +692,10 @@ class MainWindow(QMainWindow):
             # Get question and answer from text fields
             question = self.ui.CardDescriptionTextEdit.toPlainText().strip()
             answer = self.ui.textEdit.toPlainText().strip()
+            logger.debug(f"Card input - Question length: {len(question)}, Answer length: {len(answer)}")
             
             if not question or not answer:
+                logger.warning("Add card attempted with empty question or answer")
                 QMessageBox.warning(self, "Error", "Please enter both question and answer.")
                 return
                 
@@ -662,30 +704,43 @@ class MainWindow(QMainWindow):
             for button in self.tag_buttons:
                 if button.isChecked():
                     selected_tags.add(button.text())
+            logger.debug(f"Selected tags for new card: {selected_tags}")
                     
             # Create new card
             card = Card()
             full_card = FullCard(card, question, answer, selected_tags)
+            logger.debug(f"Created new FullCard with {len(selected_tags)} tags")
             
             # Add to user's cards
-            self.user.full_cards.append(full_card)
+            if self.user and hasattr(self.user, 'full_cards'):
+                self.user.full_cards.append(full_card)
+                logger.info(f"Card added to user's collection. Total cards: {len(self.user.full_cards)}")
+            else:
+                logger.error("User object missing or invalid")
+                QMessageBox.warning(self, "Error", "User data is invalid.")
+                return
             
             # Save to database
+            logger.info("Saving user data to database")
             self.app.save_user()
+            logger.info("User data saved successfully")
             
             # Clear fields
             self.ui.CardDescriptionTextEdit.clear()
             self.ui.textEdit.clear()
+            logger.debug("Input fields cleared")
             
             # Uncheck all tags
             for button in self.tag_buttons:
                 button.setChecked(False)
+            logger.debug("All tag buttons unchecked")
                 
             self.statusBar().showMessage("Card added successfully! 🎉", 3000)
             # Update status bar with new card count after a delay
             self.update_status_bar()
             
         except Exception as e:
+            logger.error(f"Error adding card: {str(e)}", exc_info=True)
             QMessageBox.warning(self, "Error", f"Failed to add card: {str(e)}")
 
     def connect_buttons_to_update_status_bar(self):

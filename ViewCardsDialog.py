@@ -3,6 +3,10 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
 from PySide6.QtCore import Qt
 from base_classes import FullCard
 from ColorProfile import ColorProfile
+from logger_config import get_logger
+
+# Set up logger for this module
+logger = get_logger(__name__)
 
 class ViewCardsDialog(QDialog):
     main_layout : QVBoxLayout
@@ -14,10 +18,12 @@ class ViewCardsDialog(QDialog):
     
     def __init__(self, user, parent=None):
         super().__init__(parent)
+        logger.info(f"Initializing ViewCardsDialog for user: {user.email}")
         self.user = user
         # Get color profile from parent if available, otherwise create default
         self.color_profile = getattr(parent, 'color_profile', ColorProfile())
         self.setup_ui()
+        logger.info(f"ViewCardsDialog initialized with {len(user.full_cards)} cards")
         
     def setup_ui(self):
         self.setWindowTitle("Your Flashcard Collection")

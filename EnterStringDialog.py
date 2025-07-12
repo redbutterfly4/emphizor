@@ -2,13 +2,19 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QDialog, QLineEdit,
                               QVBoxLayout, QLabel, QHBoxLayout, QDialogButtonBox, 
                               QPushButton, QMessageBox)
 from PySide6.QtCore import Qt
+from logger_config import get_logger
+
+# Set up logger for this module
+logger = get_logger(__name__)
 
 class EnterStringDialog(QDialog):
     def __init__(self, label_message, title, parent, len_limit):
         super().__init__(parent)
+        logger.info(f"Initializing EnterStringDialog - Title: {title}, Length limit: {len_limit}")
         self.setParent(parent)
         self.len_limit = len_limit
         self.setup_ui(label_message, title)
+        logger.info("EnterStringDialog initialized successfully")
         
     def setup_ui(self, label_message, title):
         self.setWindowTitle(title)
