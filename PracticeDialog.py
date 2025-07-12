@@ -21,6 +21,7 @@ class PracticeDialog(QDialog):
         self.review_logs = []
         self.cards_reviewed = 0
         self.cant_practice = False
+        self.sound_manager = getattr(parent, 'sound_manager', None)
         self.setup_ui()
         self.load_due_cards()
         logger.info(f"PracticeDialog initialized with {len(self.due_cards)} due cards")
@@ -353,6 +354,8 @@ class PracticeDialog(QDialog):
         
     def show_answer(self):
         """Show the answer and rating buttons with animation"""
+        if self.sound_manager:
+            self.sound_manager.play_flip()
         self.show_answer_btn.setVisible(False)
         self.answer_container.setVisible(True)
         self.rating_section.setVisible(True)
@@ -361,6 +364,13 @@ class PracticeDialog(QDialog):
         """Rate the current card and move to next"""
         current_card = self.due_cards[self.current_card_index]
         logger.info(f"Rating card {self.current_card_index + 1} with rating: {rating}")
+        
+        # Play appropriate sound based on rating
+        if self.sound_manager:
+            if rating in [Rating.Good, Rating.Easy]:
+                self.sound_manager.play_success()
+            else:  # Again or Hard
+                self.sound_manager.play_error()
         
         # Use FSRS to update the card
         try:
@@ -393,6 +403,10 @@ class PracticeDialog(QDialog):
                 logger.info("Saving user data after practice session")
                 self.app.save_user()
                 logger.info("Practice session data saved successfully")
+                
+                # Play success sound for completing practice
+                if self.sound_manager:
+                    self.sound_manager.play_success()
                 
                 QMessageBox.information(self, "Practice Complete", 
                     f"Excellent work! 🎉\n\nYou reviewed {self.cards_reviewed} cards.\n"

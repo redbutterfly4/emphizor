@@ -14,6 +14,7 @@ from fsrs import Card
 from ColorProfile import ColorProfile
 from config import Config
 from logger_config import get_logger
+from sound_manager import SoundManager
 
 # Set up logger for this module
 logger = get_logger(__name__)
@@ -101,6 +102,7 @@ class MainWindow(QMainWindow):
         self.app = None
         self.user = None
         self.color_profile = ColorProfile()
+        self.sound_manager = SoundManager(self)
         logger.debug("MainWindow base attributes initialized")
         
         # Show authentication dialog first
@@ -594,11 +596,13 @@ class MainWindow(QMainWindow):
             self.tag_buttons[-1].clicked.connect(self.update_status_bar)
             
     def add_tag_clicked(self):
+        self.sound_manager.play_click()
         self.create_enter_string_dialog('Enter tag: ', 'Add tag')
         self.enter_string_dialog.exec()
     def view_cards_clicked(self):
         """Show the view cards dialog"""
         logger.info("View cards button clicked")
+        self.sound_manager.play_click()
         if not self.user:
             logger.warning("View cards attempted but user not authenticated")
             QMessageBox.warning(self, "Error", "User not authenticated.")
@@ -612,6 +616,7 @@ class MainWindow(QMainWindow):
     def practice_clicked(self):
         """Start a practice session"""
         logger.info("Practice button clicked")
+        self.sound_manager.play_click()
         if not self.user or not self.app:
             logger.warning("Practice attempted but user not authenticated")
             QMessageBox.warning(self, "Error", "User not authenticated.")
@@ -631,6 +636,7 @@ class MainWindow(QMainWindow):
     
     def concept_connect_clicked(self):
         """Start a Concept Connect game session"""
+        self.sound_manager.play_click()
         if not self.user:
             QMessageBox.warning(self, "Error", "User not authenticated.")
             return
@@ -725,6 +731,9 @@ class MainWindow(QMainWindow):
             self.app.save_user()
             logger.info("User data saved successfully")
             
+            # Play success sound
+            self.sound_manager.play_success()
+            
             # Clear fields
             self.ui.CardDescriptionTextEdit.clear()
             self.ui.textEdit.clear()
@@ -741,6 +750,7 @@ class MainWindow(QMainWindow):
             
         except Exception as e:
             logger.error(f"Error adding card: {str(e)}", exc_info=True)
+            self.sound_manager.play_error()
             QMessageBox.warning(self, "Error", f"Failed to add card: {str(e)}")
 
     def connect_buttons_to_update_status_bar(self):
