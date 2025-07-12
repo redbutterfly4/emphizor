@@ -5,10 +5,15 @@ from PySide6.QtGui import QFont, QPalette, QColor
 from datetime import datetime, timezone
 from fsrs import Rating
 from base_classes import FullCard
+from logger_config import get_logger
+
+# Set up logger for this module
+logger = get_logger(__name__)
 
 class PracticeDialog(QDialog):
     def __init__(self, user, app, parent=None):
         super().__init__(parent)
+        logger.info(f"Initializing PracticeDialog for user: {user.email}")
         self.user = user
         self.app = app
         self.current_card_index = 0
@@ -18,6 +23,7 @@ class PracticeDialog(QDialog):
         self.cant_practice = False
         self.setup_ui()
         self.load_due_cards()
+        logger.info(f"PracticeDialog initialized with {len(self.due_cards)} due cards")
         
     def setup_ui(self):
         self.setWindowTitle("Practice Session - Emphizor")
@@ -354,6 +360,7 @@ class PracticeDialog(QDialog):
     def rate_card(self, rating):
         """Rate the current card and move to next"""
         current_card = self.due_cards[self.current_card_index]
+        logger.info(f"Rating card {self.current_card_index + 1} with rating: {rating}")
         
         # Use FSRS to update the card
         try:
@@ -367,27 +374,34 @@ class PracticeDialog(QDialog):
             self.review_logs.append(review_log)
             
             self.cards_reviewed += 1
+            logger.info(f"Card rated successfully. Total cards reviewed: {self.cards_reviewed}")
             
             # Move to next card
             self.current_card_index += 1
             self.update_display()
             
         except Exception as e:
+            logger.error(f"Failed to rate card: {str(e)}", exc_info=True)
             QMessageBox.warning(self, "Error", f"Failed to rate card: {str(e)}")
             
     def finish_practice(self):
         """Finish the practice session"""
+        logger.info(f"Finishing practice session. Cards reviewed: {self.cards_reviewed}")
         if self.cards_reviewed > 0:
             try:
                 # Save updated user data
+                logger.info("Saving user data after practice session")
                 self.app.save_user()
+                logger.info("Practice session data saved successfully")
                 
                 QMessageBox.information(self, "Practice Complete", 
                     f"Excellent work! 🎉\n\nYou reviewed {self.cards_reviewed} cards.\n"
                     f"Your progress has been saved.\n\nKeep up the great studying!")
             except Exception as e:
+                logger.error(f"Failed to save progress after practice: {str(e)}", exc_info=True)
                 QMessageBox.warning(self, "Save Error", f"Failed to save progress: {str(e)}")
         else:
+            logger.info("Practice session completed with no cards reviewed")
             QMessageBox.information(self, "Practice Complete", "No cards were reviewed.")
             
         self.accept() 

@@ -6,6 +6,10 @@ from PySide6.QtGui import QFont, QColor, QPalette
 import random
 import math
 from base_classes import FullCard
+from logger_config import get_logger
+
+# Set up logger for this module
+logger = get_logger(__name__)
 
 class CardWidget(QFrame):
     """Simple clickable card widget with animations"""
@@ -223,6 +227,7 @@ class ConceptConnectDialog(QDialog):
     
     def __init__(self, user, parent=None):
         super().__init__(parent)
+        logger.info(f"Initializing ConceptConnectDialog for user: {user.email}")
         self.user = user
         self.color_profile = getattr(parent, 'color_profile', None)
         self.selected_cards = []
@@ -235,6 +240,7 @@ class ConceptConnectDialog(QDialog):
         self.score_animation = None
         self.setup_ui()
         self.load_game_cards()
+        logger.info(f"ConceptConnectDialog initialized with {len(self.game_cards)} cards")
         
     def setup_ui(self):
         self.setWindowTitle("Concept Connect - Match Related Cards")
