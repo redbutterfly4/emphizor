@@ -230,6 +230,7 @@ class ConceptConnectDialog(QDialog):
         logger.info(f"Initializing ConceptConnectDialog for user: {user.email}")
         self.user = user
         self.color_profile = getattr(parent, 'color_profile', None)
+        self.sound_manager = getattr(parent, 'sound_manager', None)
         self.selected_cards = []
         self.card_widgets = []
         self.matched_pairs = []
@@ -500,6 +501,10 @@ class ConceptConnectDialog(QDialog):
             self.matches_found += 1
             self.score += 100
             
+            # Play match found sound
+            if self.sound_manager:
+                self.sound_manager.play_success()
+            
             card1.matched = True
             card2.matched = True
             card1.selected = False
@@ -524,6 +529,10 @@ class ConceptConnectDialog(QDialog):
         else:
             # No match - animate rejection
             self.score = max(0, self.score - 20)
+            
+            # Play incorrect sound
+            if self.sound_manager:
+                self.sound_manager.play_error()
             
             # Brief pause then show no match
             QTimer.singleShot(300, lambda: self.handle_no_match(card1, card2))
@@ -619,6 +628,10 @@ class ConceptConnectDialog(QDialog):
     def game_complete(self):
         """Handle game completion with simple celebration"""
         accuracy = (self.matches_found / self.attempts * 100) if self.attempts > 0 else 0
+        
+        # Play game completion sound
+        if self.sound_manager:
+            self.sound_manager.play_success()
         
         # Quick celebration bounce for all matched cards
         for card in self.card_widgets:
